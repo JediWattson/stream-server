@@ -1,0 +1,29 @@
+{
+  "name": "stream-server",
+  "version": "0.0.1",
+  "description": "a server that uses websockets and various technologies to implement streaming services",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JediWattson/stream-server.git"
+  },
+  "keywords": [
+    "nodejs",
+    "websockets",
+    "obs"
+  ],
+  "author": "JediWattzon22",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JediWattson/stream-server/issues"
+  },
+  "homepage": "https://github.com/JediWattson/stream-server#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.18.0"
+  }
+}
