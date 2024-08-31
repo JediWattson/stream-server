@@ -24,6 +24,8 @@ wss.on('connection', (ws) => {
   });
 });
 
+app.get('/test', (req, res) => res.send({ hello: "world" }))
+
 // Handle Twitch webhooks
 app.use('/webhook', express.json({
   verify: (req, res, buf) => {
