@@ -6,7 +6,7 @@ const crypto = require('crypto');
 
 const wss = require('./websocket') 
 const { readAndParseStream } = require("./helpers")
-const { subEvent, auth, webhook } = require('./hooks') 
+const { subEvent, token, subList, webhook } = require('./hooks') 
 
 const app = express();
 const server = http.createServer(app);
@@ -30,9 +30,13 @@ const socket = wss({ server })
 
 const init = async () => {
 	const secret = crypto.randomBytes(32).toString('hex');
-	const authRes = await auth({ secret })
-	const eventRes = await subEvent({ authRes, secret })
-	if (eventRes.status > 399 && eventRes.status < 405) return
+	const auth = await token({ secret })
+	const isSubbed = await subList({ auth })
+	
+	if (!isSubbed) {		
+		const eventRes = await subEvent({ auth, secret })
+		if (eventRes.status > 399 && eventRes.status < 405) return
+	}
 
 	webhook({ socket, secret, app })
 	return true

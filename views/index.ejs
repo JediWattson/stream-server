@@ -1,11 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Authorization Successful</title>
+	<script src="https://unpkg.com/obs-websocket-js@5/dist/obs-websocket.min.js"></script>
+	<title>Famtrees - Stream</title>
+
+  <style>
+    /* Basic styling for the form */
+    #login-form {
+      display: flex;
+      flex-direction: column;
+      width: 300px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    label {
+      margin-bottom: 5px;
+    }
+
+    input[type="text"], input[type="password"] {
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+
+    button[type="submit"] {
+      background-color: #4CAF50; /* Green */
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <h1>Authorization Successful!</h1>
-  <p>Your Twitch account is now connected to our app. You can start using the features that require authorization.</p>
+  <div id="login-form">
+    <h2>Connect to OBS</h2>
+    <label for="address">OBS Address:</label>
+    <input type="text" id="address" name="address" value="localhost:4444">
 
-  </body>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password">
+
+    <button type="submit" id="connect-button">Connect</button>
+  </div>
+
+  <script src="https://unpkg.com/obs-websocket-js@5/dist/obs-websocket.min.js"></script>
+  <script>
+    const connectButton = document.getElementById('connect-button');
+    const addressInput = document.getElementById('address');
+    const passwordInput = document.getElementById('password');
+
+    connectButton.addEventListener('click', () => {
+      const address = addressInput.value;
+      const password = passwordInput.value;
+
+      const obs = new OBSWebSocket();
+      obs.connect({
+        address: address,
+        password: password
+      })
+      .then(() => {
+        console.log('Connected to OBS');
+        // You can add code here to update the UI or perform other actions after successful connection
+      })
+      .catch(err => {
+        console.error('Error connecting to OBS:', err);
+        // Display an error message to the user
+      });
+    });
+  </script>
+</body>
 </html>

@@ -4,11 +4,11 @@ const secret = crypto.randomBytes(32).toString('hex');
 
 const { readAndParseStream } = require("./helpers")
 
-const auth = async ({ secret }) => {
+const token = async ({ secret }) => {
     const data = new URLSearchParams({
         client_id: process.env.CLIENT_ID,
         client_secret: process.env.CLIENT_SECRET,
-        grant_type: "client_credentials",
+        grant_type: "cliient_credentials",
     })
 
     const res = await fetch('https://id.twitch.tv/oauth2/token', {
@@ -20,11 +20,23 @@ const auth = async ({ secret }) => {
 	return readAndParseStream(res.body)
 }
 
-const subEvent = async ({ authRes, secret }) => {
+const subList = async ({ auth }) => {
+	const response = await axios.get('https://api.twitch.tv/helix/eventsub/subscriptions?type=channel.follow', {     
+		"Authorization": `Bearer ${auth.access_token}`,
+        "Client-Id": process.env.CLIENT_ID,      
+    });
+
+	console.log(response.data)
+    //const isSubscribed = response.data.data.some(sub => sub.status === 'enabled')
+}
+
+  
+
+const subEvent = async ({ auth, secret }) => {
     const res = await fetch('https://api.twitch.tv/helix/eventsub/subscriptions', {
         method: "POST",
         headers: {
-            "Authorization": `Bearer ${authRes.access_token}`,
+            "Authorization": `Bearer ${auth.access_token}`,
             "Content-Type": "application/json",
             "Client-Id": process.env.CLIENT_ID, 
         },
@@ -82,4 +94,4 @@ const webhook = ({ app, secret, socket }) => {
     });
 }
 
-module.exports = { auth, webhook, subEvent }
+module.exports = { token, webhook, subEvent }
