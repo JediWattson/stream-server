@@ -22,7 +22,7 @@ app.get("/", async (req, res) => {
 
 	res.render('auth', {
 	   	clientId: process.env.CLIENT_ID,
-		redirectUri: process.env.REDIRECT_URI 
+		redirectUri: process.env.CALLBACK_URL 
 	});
 })
 
@@ -32,7 +32,7 @@ const init = async () => {
 	const socket = wss({ server })
 	const authRes = await auth({ secret })
 	const eventRes = await subEvent({ authRes, secret })
-	console.log(eventRes)
+	console.log(authRes, eventRes)
 	if (eventRes.status > 399) return
 
 	webhook({ socket, secret, app })

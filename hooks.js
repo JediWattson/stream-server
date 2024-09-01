@@ -49,7 +49,7 @@ const subEvent = async ({ authRes, secret }) => {
 const webhook = ({ app, secret, socket }) => {
     app.use('/webhook', express.json({
         verify: (req, res, buf) => {
-            if (process.env.NODE_ENV !== "production") return;
+            if (process.env.NODE_ENV === "develop") return;
         
             const messageId = req.header('Twitch-Eventsub-Message-Id');
             const timestamp = req.header('Twitch-Eventsub-Message-Timestamp');
