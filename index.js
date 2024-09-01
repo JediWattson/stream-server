@@ -26,14 +26,13 @@ app.get("/", async (req, res) => {
 	});
 })
 
+const socket = wss({ server })
+
 const init = async () => {
 	const secret = crypto.randomBytes(32).toString('hex');
-
-	const socket = wss({ server })
 	const authRes = await auth({ secret })
 	const eventRes = await subEvent({ authRes, secret })
-	console.log(authRes, eventRes)
-	if (eventRes.status > 399) return
+	if (eventRes.status > 399 && eventRes.status < 405) return
 
 	webhook({ socket, secret, app })
 	return true

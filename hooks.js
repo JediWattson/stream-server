@@ -66,17 +66,16 @@ const webhook = ({ app, secret, socket }) => {
 
     app.post('/webhook', (req, res) => {
         const messageType = req.header('Twitch-Eventsub-Message-Type');
-        const message = req.body;
-        if (messageType === 'webhook_callback_verification') 
+        const message = JSON.parse(req.body.toString());
+        console.log(message)
+	if (messageType === 'webhook_callback_verification') 
             return res.status(200).send(message.challenge);
                 
         if (messageType === 'notification') {
             const eventType = message.subscription.type;
             const eventData = message.event;
             const messageToSend = JSON.stringify({ type: eventType, data: eventData });
-            if (socket.readyState !== WebSocket.OPEN) return;
-                    
-            socket.send(messageToSend);
+            socket.user.send(messageToSend);
         } 
         
         res.status(204).end();
