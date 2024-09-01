@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+  display: flex;
+  position: relative; 
+  justify-content: center; /* Center the video horizontally */
+  align-items: center;     /* Center the video vertically */
+}
+  video {
+    height: auto;
+  }
+
+  @font-face {
+	font-family: "jedi";
+ 	src: url('Starjedi.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+  }
+  
+  .text-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -54%); 
+  }
+
+  .name {
+	font-family: "jedi";
+    color: white;
+    font-size: 96px; 
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
+  }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+  <video autoplay muted>
+    <source src="new-follow.webm"> 
+    Your browser doesn't support the video tag.
+  </video>
+  <div class="text-overlay">
+	<p class="name" id="username"></p>
+  </div>
+</div>
+
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const username = urlParams.get('username');   
+  const usernameOverlay = document.getElementById('username');
+
+  if (username) {
+    usernameOverlay.textContent = username;
+  } else {
+    usernameOverlay.textContent = "Anon"; 
+  }
+</script>
+
+</body>
+</html>
