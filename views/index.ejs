@@ -57,25 +57,32 @@
 
   	websocket.onmessage = async function(event) {
 			const payload = JSON.parse(event.data)
-	   	const res = await window.obsSocket?.call('SetInputSettings', { 
+	   	await window.obsSocket?.call('SetInputSettings', { 
 				inputName: "new follow",
 				overlay: true,
 				inputSettings: {
-					local_file: `/home/jediwattzon22/Documents/stream-sources/new-follower.html?username=${payload.data?.user_name}`		
+					url: `https://stream.famtrees.net/browser-source?sourcePath=sources/new-follower&username=${payload.data?.user_name}`		
 				}
 			})
-			console.log(res)
 			
 			const id = await window.obsSocket?.call('GetSceneItemId', {
 				sceneName: "Main",
 				sourceName: "new follow"
 			})
-			console.log(id)
-			window.obsSocket?.call('SetSceneItemEnabled', { 
+			
+			await window.obsSocket?.call('SetSceneItemEnabled', { 
 				sceneName: "Main",
 				sceneItemEnabled: true,
 				...id
 			})
+
+			setTimeout(() => {
+				window.obsSocket?.call('SetSceneItemEnabled', {
+					...id,
+					sceneName: "Main",
+					sceneItemEnabled: false,
+				})
+			}, 1000*10.2)
 		}
 
   	websocket.onclose = function(event) {

@@ -2,21 +2,22 @@
 <html>
 <head>
 <style>
-.container {
-  display: flex;
-  position: relative; 
-  justify-content: center; /* Center the video horizontally */
-  align-items: center;     /* Center the video vertically */
-}
-  video {
+	.container {
+  	display: flex;
+  	position: relative; 
+ 		justify-content: center; /* Center the video horizontally */
+  	align-items: center;     /* Center the video vertically */
+	}
+  
+	video {
     height: auto;
   }
 
   @font-face {
-	font-family: "jedi";
- 	src: url('Starjedi.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
+		font-family: "jedi";
+	 	src: url('static/Starjedi.ttf') format('truetype');
+		font-weight: normal;
+		font-style: normal;
   }
   
   .text-overlay {
@@ -27,9 +28,9 @@
   }
 
   .name {
-	font-family: "jedi";
+		font-family: "jedi";
     color: white;
-    font-size: 96px; 
+    font-size: 69px; 
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
   }
 
@@ -39,7 +40,7 @@
 
 <div class="container">
   <video autoplay muted>
-    <source src="new-follow.webm"> 
+    <source src="static/new-follow.webm"> 
     Your browser doesn't support the video tag.
   </video>
   <div class="text-overlay">

@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+const path = require('path');
 const express = require("express");
 const http = require("http");
 const crypto = require("crypto");
@@ -11,12 +12,20 @@ const { delSub, subEvent, token, subList, webhook } = require("./hooks");
 const app = express();
 const server = http.createServer(app);
 
+app.use("/static", express.static(path.join(__dirname, '/public')));   
 app.set("view engine", "ejs");
+
 app.use(
   express.raw({
     type: "application/json",
   }),
 );
+
+app.get("/browser-source", (req, res) => {
+	  const username = req.query.username;
+		const sourcePath = req.query.sourcePath
+		res.render(sourcePath, { username })
+})
 
 app.get("/", async (req, res) => {
   const isSuccess = await init();
