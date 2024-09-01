@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Twitch Authorization</title>
+</head>
+<body>
+    <h1>Authorize My Twitch App</h1>
+    <a href="#" id="authorize-button">Authorize with Twitch</a>
+
+	<script>
+		const clientId = '<%= clientId %>';
+	 	const redirectUri = '<%= redirectUri %>';
+        const scopes = 'user:read:email'; 
+        
+		document.getElementById('authorize-button').addEventListener('click', () => {
+            const authorizationUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scopes}`;
+
+            window.location.href = authorizationUrl;
+        });
+    </script>
+</body>
+</html>
