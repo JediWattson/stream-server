@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="https://unpkg.com/obs-websocket-js@5/dist/obs-websocket.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js"></script>
 	<title>Famtrees - Stream</title>
 
   <style>
@@ -48,48 +48,62 @@
 
     <button type="submit" id="connect-button">Connect</button>
   </div>
-<script>
-  const websocket = new WebSocket("<%= websocketUrl %>"); 
+	<script>
+	 	const websocket = new WebSocket("<%= websocketUrl %>"); 
+  	websocket.onopen = function(event) {
+    	console.log("WebSocket connection opened.");
+    	websocket.send("Hello from the client!");
+  	};
 
-  websocket.onopen = function(event) {
-    console.log("WebSocket connection opened.");
-    websocket.send("Hello from the client!");
-  };
+  	websocket.onmessage = async function(event) {
+			const payload = JSON.parse(event.data)
+	   	const res = await window.obsSocket?.call('SetInputSettings', { 
+				inputName: "new follow",
+				overlay: true,
+				inputSettings: {
+					local_file: `/home/jediwattzon22/Documents/stream-sources/new-follower.html?username=${payload.data?.user_name}`		
+				}
+			})
+			console.log(res)
+			
+			const id = await window.obsSocket?.call('GetSceneItemId', {
+				sceneName: "Main",
+				sourceName: "new follow"
+			})
+			console.log(id)
+			window.obsSocket?.call('SetSceneItemEnabled', { 
+				sceneName: "Main",
+				sceneItemEnabled: true,
+				...id
+			})
+		}
 
-  websocket.onmessage = function(event) {
-    console.log("Received message from server:", event.data);
-  };
+  	websocket.onclose = function(event) {
+	    console.log("WebSocket connection closed.");
+	  };
 
-  websocket.onclose = function(event) {
-    console.log("WebSocket connection closed.");
-  };
-
-	websocket.onerror = function(event) {
+		websocket.onerror = function(event) {
 		console.error("WebSocket error occurred:", event);
   	};
-  </script>
-  <script src="https://unpkg.com/obs-websocket-js@5/dist/obs-websocket.min.js"></script>
-  <script>
-    const connectButton = document.getElementById('connect-button');
+	</script>
+	<script>	
+ 		window.obsSocket = new OBSWebSocket();
+		const connectButton = document.getElementById('connect-button');
     const addressInput = document.getElementById('address');
     const passwordInput = document.getElementById('password');
 
     connectButton.addEventListener('click', () => {
       const address = addressInput.value;
       const password = passwordInput.value;
-
-      window.obsSocket = new OBSWebSocket();
-      window.obsSocket.connect({
-        address: address,
-        password: password
-      })
+			
+      window.obsSocket.connect(address, password)
       .then(() => {
         console.log('Connected to OBS');
       })
       .catch(err => {
         console.error('Error connecting to OBS:', err);
       });
-    });
+		});
   </script>
 </body>
 </html>

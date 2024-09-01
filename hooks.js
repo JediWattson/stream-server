@@ -8,7 +8,7 @@ const token = async ({ secret }) => {
   const data = new URLSearchParams({
     client_id: process.env.CLIENT_ID,
     client_secret: process.env.CLIENT_SECRET,
-    grant_type: "cliient_credentials",
+    grant_type: "client_credentials",
   });
 
   const res = await fetch("https://id.twitch.tv/oauth2/token", {
@@ -20,17 +20,35 @@ const token = async ({ secret }) => {
   return readAndParseStream(res.body);
 };
 
-const subList = async ({ auth }) => {
-  const response = await axios.get(
-    "https://api.twitch.tv/helix/eventsub/subscriptions?type=channel.follow",
-    {
-      Authorization: `Bearer ${auth.access_token}`,
-      "Client-Id": process.env.CLIENT_ID,
-    },
+const delSub = async ({ auth, subId }) => {
+	const response = await fetch(
+    `https://api.twitch.tv/helix/eventsub/subscriptions?id=${subId}`,
+		{
+			method: "delete",
+			headers: {
+	      Authorization: `Bearer ${auth.access_token}`,
+  	    "Client-Id": process.env.CLIENT_ID,
+    	}
+		},
   );
 
-  console.log(response.data);
-  //const isSubscribed = response.data.data.some(sub => sub.status === 'enabled')
+	if (response.status !== 204)
+		throw Error("sub didn't delete :(")
+};
+
+
+const subList = async ({ auth }) => {
+	const response = await fetch(
+    "https://api.twitch.tv/helix/eventsub/subscriptions?type=channel.follow",						
+		{
+			headers: {
+	      Authorization: `Bearer ${auth.access_token}`,
+  	    "Client-Id": process.env.CLIENT_ID,
+    	}
+		},
+  );
+
+  return readAndParseStream(response.body);
 };
 
 const subEvent = async ({ auth, secret }) => {
@@ -104,4 +122,4 @@ const webhook = ({ app, secret, socket }) => {
   });
 };
 
-module.exports = { token, webhook, subEvent };
+module.exports = { token, webhook, subEvent, subList, delSub };

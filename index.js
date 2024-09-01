@@ -6,7 +6,7 @@ const crypto = require("crypto");
 
 const wss = require("./websocket");
 const { readAndParseStream } = require("./helpers");
-const { subEvent, token, subList, webhook } = require("./hooks");
+const { delSub, subEvent, token, subList, webhook } = require("./hooks");
 
 const app = express();
 const server = http.createServer(app);
@@ -34,14 +34,21 @@ app.get("/", async (req, res) => {
 const socket = wss({ server });
 
 const init = async () => {
-  const secret = crypto.randomBytes(32).toString("hex");
-  const auth = await token({ secret });
-  const isSubbed = await subList({ auth });
+	const secret = crypto.randomBytes(32).toString("hex");
+	const auth = await token({ secret });
+  const list = await subList({ auth });
+	if (list.status > 399) return false
 
-  if (!isSubbed) {
-    const eventRes = await subEvent({ auth, secret });
-    if (eventRes.status > 399 && eventRes.status < 405) return;
+	if (!list.data?.length) {
+    const events = await subEvent({ auth, secret });
+    if (events.status > 399) return false;
   }
+	
+	const disabledSubs = list.data?.filter(l => l.status !== "enabled")
+	if (disabledSubs.length > 0) 
+		await Promise.all(
+						disabledSubs.map(sub => delSub({ subId: sub.id, auth }))
+					)
 
   webhook({ socket, secret, app });
   return true;
