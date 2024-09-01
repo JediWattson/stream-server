@@ -9,18 +9,15 @@ const wss = require("./websocket");
 const { readAndParseStream } = require("./helpers");
 const { delSub, subEvent, token, subList, webhook } = require("./hooks");
 
+const PORT = process.env.PORT || 3000;
 const app = express();
 const server = http.createServer(app);
+const secret = crypto.randomBytes(32).toString("hex");
 const socket = wss({ server });
 
 app.use("/static", express.static(path.join(__dirname, '/public')));   
 app.set("view engine", "ejs");
-
-app.use(
-  express.raw({
-    type: "application/json",
-  }),
-);
+app.use(express.raw({ type: "application/json"}));
 
 app.get("/browser-source", (req, res) => {
 	  const username = req.query.username;
@@ -41,14 +38,15 @@ app.get("/", async (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
+
+webhook({ socket, secret, app });
+
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
 
 
 const init = async () => {
-	const secret = crypto.randomBytes(32).toString("hex");
 	const auth = await token({ secret });
   const list = await subList({ auth });
 	if (list.status > 399) return false
@@ -64,7 +62,6 @@ const init = async () => {
 	if (disabledSubs.length > 0) 
 		await Promise.all(disabledSubs.map(sub => delSub({ subId: sub.id, auth })))
 
-  webhook({ socket, secret, app });
   return true;
 };
 

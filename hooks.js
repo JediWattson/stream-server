@@ -85,13 +85,16 @@ const webhook = ({ app, secret, socket }) => {
     "/webhook",
     express.json({
       verify: (req, res, buf) => {
-        const messageId = req.header("Twitch-Eventsub-Message-Id");
+				console.log(secret)
+				const messageId = req.header("Twitch-Eventsub-Message-Id");
         const timestamp = req.header("Twitch-Eventsub-Message-Timestamp");
         const signature = req.header("Twitch-Eventsub-Message-Signature");
         const hmacMessage = messageId + timestamp + req.body;
         const expectedSignature = "sha256=" + crypto.createHmac("sha256", secret)
 						.update(hmacMessage)
 						.digest("hex");
+
+				console.log(signature, expectedSignature)
         if (signature !== expectedSignature) {
 					res.sendStatus(403)
           throw new Error("Invalid Twitch webhook signature");
