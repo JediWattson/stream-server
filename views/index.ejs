@@ -48,7 +48,26 @@
 
     <button type="submit" id="connect-button">Connect</button>
   </div>
+<script>
+  const websocket = new WebSocket("<%= websocketUrl %>"); 
 
+  websocket.onopen = function(event) {
+    console.log("WebSocket connection opened.");
+    websocket.send("Hello from the client!");
+  };
+
+  websocket.onmessage = function(event) {
+    console.log("Received message from server:", event.data);
+  };
+
+  websocket.onclose = function(event) {
+    console.log("WebSocket connection closed.");
+  };
+
+	websocket.onerror = function(event) {
+		console.error("WebSocket error occurred:", event);
+  	};
+  </script>
   <script src="https://unpkg.com/obs-websocket-js@5/dist/obs-websocket.min.js"></script>
   <script>
     const connectButton = document.getElementById('connect-button');
@@ -59,18 +78,16 @@
       const address = addressInput.value;
       const password = passwordInput.value;
 
-      const obs = new OBSWebSocket();
-      obs.connect({
+      window.obsSocket = new OBSWebSocket();
+      window.obsSocket.connect({
         address: address,
         password: password
       })
       .then(() => {
         console.log('Connected to OBS');
-        // You can add code here to update the UI or perform other actions after successful connection
       })
       .catch(err => {
         console.error('Error connecting to OBS:', err);
-        // Display an error message to the user
       });
     });
   </script>

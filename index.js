@@ -18,7 +18,9 @@ app.use(express.raw({
 
 app.get("/", async (req, res) => {
 	const isSuccess = await init()
-	if (isSuccess) return res.render('index')
+	if (isSuccess) return res.render('index', { 
+		websocketUrl: process.env.WEBSOCKET_URL
+	})
 
 	res.render('auth', {
 	   	clientId: process.env.CLIENT_ID,
