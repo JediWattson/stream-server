@@ -5,7 +5,6 @@
 	<title>Famtrees - Stream</title>
 
   <style>
-    /* Basic styling for the form */
     #login-form {
       display: flex;
       flex-direction: column;
@@ -35,6 +34,23 @@
       border-radius: 4px;
       cursor: pointer;
     }
+
+    .status-indicator {
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .connected {
+      background-color: #4CAF50; /* Green */
+      color: white;
+    }
+
+    .disconnected {
+      background-color: #f44336; /* Red */
+      color: white;
+    }
+
   </style>
 </head>
 <body>
@@ -48,18 +64,12 @@
 
     <button type="submit" id="connect-button">Connect</button>
   </div>
+
+  <div id="obs-status" class="status-indicator disconnected">OBS: Disconnected</div>
+  <div id="ws-server-status" class="status-indicator disconnected">WebSocket Server: Disconnected</div>
 	<script>
-	 	const websocket = new WebSocket("<%= websocketUrl %>"); 
-  	websocket.onopen = function(event) {
-    	websocket.send("pong");
-  	};
-
-
-		websocket.addEventListener('ping', () => {
-			websocket.pong();
-	  });
-
-  	websocket.onmessage = async function(event) {
+    const wsServerStatus = document.getElementById('ws-server-status');
+		async function handleMessage(event) {
 			const payload = JSON.parse(event.data)
 	   	await window.obsSocket?.call('SetInputSettings', { 
 				inputName: "new follow",
@@ -89,13 +99,48 @@
 			}, 1000*10.2)
 		}
 
-  	websocket.onclose = function(event) {
-	    console.log("WebSocket connection closed.");
-	  };
+		let websocket;
+		let reconnectAttempts = 0;
+		const maxReconnectAttempts = 10; // Adjust as needed
 
-		websocket.onerror = function(event) {
-		console.error("WebSocket error occurred:", event);
-  	};
+
+		function connect() {
+		 	websocket = new WebSocket("<%= websocketUrl %>"); 
+  		websocket.onopen = function(event) {
+				reconnectAttempts = 0
+	    	wsServerStatus.textContent = 'WebSocket Server: Connected';
+        wsServerStatus.classList.remove('disconnected');
+        wsServerStatus.classList.add('connected');
+  		};
+
+			websocket.onping = () => {
+				websocket.pong();
+	  	};
+
+	  	websocket.onmessage = async function(event) {
+				handleMessage(event)
+			}
+
+	  	websocket.onclose = function(event) {
+				wsServerStatus.textContent = 'WebSocket Server: Reconnecting';
+    	  wsServerStatus.classList.remove('connected');
+      	wsServerStatus.classList.add('disconnected');
+				
+				reconnectAttempts++;
+		    if (reconnectAttempts <= maxReconnectAttempts) {
+    		  const delay = Math.min(Math.pow(2, reconnectAttempts) * 1000, 30000); // Exponential backoff with max delay of 30 seconds
+      		setTimeout(connect, delay);
+    		} else {
+					wsServerStatus.textContent = 'WebSocket Server: Disconnected';
+    		}
+	  	};
+
+			websocket.onerror = function(event) {
+				console.error("WebSocket error occurred:", event);
+  		};
+		}
+
+		connect()
 	</script>
 	<script>	
  		window.obsSocket = new OBSWebSocket();
@@ -103,17 +148,15 @@
     const addressInput = document.getElementById('address');
     const passwordInput = document.getElementById('password');
 
-    connectButton.addEventListener('click', () => {
+    connectButton.addEventListener('click', async () => {
       const address = addressInput.value;
       const password = passwordInput.value;
 			
-      window.obsSocket.connect(address, password)
-      .then(() => {
-        console.log('Connected to OBS');
-      })
-      .catch(err => {
-        console.error('Error connecting to OBS:', err);
-      });
+      await window.obsSocket.connect(address, password)
+	    const obsStatus = document.getElementById('obs-status');
+      obsStatus.textContent = 'OBS: Connected';
+      obsStatus.classList.remove('disconnected');
+      obsStatus.classList.add('connected');
 		});
   </script>
 </body>

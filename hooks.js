@@ -85,16 +85,15 @@ const webhook = ({ app, secret, socket }) => {
     "/webhook",
     express.json({
       verify: (req, res, buf) => {
-        if (process.env.NODE_ENV === "develop") return;
-
         const messageId = req.header("Twitch-Eventsub-Message-Id");
         const timestamp = req.header("Twitch-Eventsub-Message-Timestamp");
         const signature = req.header("Twitch-Eventsub-Message-Signature");
-        const hmacMessage = messageId + timestamp + buf;
-        const expectedSignature =
-          "sha256=" +
-          crypto.createHmac("sha256", secret).update(hmacMessage).digest("hex");
+        const hmacMessage = messageId + timestamp + req.body;
+        const expectedSignature = "sha256=" + crypto.createHmac("sha256", secret)
+						.update(hmacMessage)
+						.digest("hex");
         if (signature !== expectedSignature) {
+					res.sendStatus(403)
           throw new Error("Invalid Twitch webhook signature");
         }
       },
@@ -103,7 +102,8 @@ const webhook = ({ app, secret, socket }) => {
 
   app.post("/webhook", (req, res) => {
     const messageType = req.header("Twitch-Eventsub-Message-Type");
-    const message = JSON.parse(req.body.toString());
+		console.log(messageType)
+		const message = JSON.parse(req.body.toString());
     if (messageType === "webhook_callback_verification")
       return res.status(200).send(message.challenge);
 
@@ -117,8 +117,8 @@ const webhook = ({ app, secret, socket }) => {
       socket.user.send(messageToSend);
     }
 
-    res.status(204).end();
-  });
+    res.sendStatus(204);
+	});
 };
 
 module.exports = { token, webhook, subEvent, subList, delSub };

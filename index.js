@@ -11,6 +11,7 @@ const { delSub, subEvent, token, subList, webhook } = require("./hooks");
 
 const app = express();
 const server = http.createServer(app);
+const socket = wss({ server });
 
 app.use("/static", express.static(path.join(__dirname, '/public')));   
 app.set("view engine", "ejs");
@@ -40,7 +41,11 @@ app.get("/", async (req, res) => {
   });
 });
 
-const socket = wss({ server });
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+
 
 const init = async () => {
 	const secret = crypto.randomBytes(32).toString("hex");
@@ -52,18 +57,14 @@ const init = async () => {
     const events = await subEvent({ auth, secret });
     if (events.status > 399) return false;
   }
-	
-	const disabledSubs = list.data?.filter(l => l.status !== "enabled")
+
+	const disabledSubs = list.data?.filter(l =>
+		["webhook_callback_verification_pending", "enabled"].includes(l.status)
+	)
 	if (disabledSubs.length > 0) 
-		await Promise.all(
-						disabledSubs.map(sub => delSub({ subId: sub.id, auth }))
-					)
+		await Promise.all(disabledSubs.map(sub => delSub({ subId: sub.id, auth })))
 
   webhook({ socket, secret, app });
   return true;
 };
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
