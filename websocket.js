@@ -7,6 +7,14 @@ module.exports = ({ server }) => {
   wss.on("connection", (ws) => {
     console.log("New WebSocket client connected");
     socket.user = ws;
+ 		const pingInterval = setInterval(() => {
+    	if (ws.readyState === WebSocket.OPEN) { 
+      	ws.ping(); 
+    	} else {
+      	clearInterval(pingInterval); 
+    	}
+  	}, 30000); 
+
 
     ws.on("close", () => {
       console.log("WebSocket client disconnected");

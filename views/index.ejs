@@ -51,9 +51,13 @@
 	<script>
 	 	const websocket = new WebSocket("<%= websocketUrl %>"); 
   	websocket.onopen = function(event) {
-    	console.log("WebSocket connection opened.");
-    	websocket.send("Hello from the client!");
+    	websocket.send("pong");
   	};
+
+
+		websocket.addEventListener('ping', () => {
+			websocket.pong();
+	  });
 
   	websocket.onmessage = async function(event) {
 			const payload = JSON.parse(event.data)
