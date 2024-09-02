@@ -31,10 +31,17 @@ module.exports = ({ app, server, secret }) => {
 			type: "verify-with-id",
 			userId
 		}))
+
 		ws.on("close", () => {
 			if(sockets[userId])
 				delete sockets[userId]
 		});
+
+		const authTimeout = setTimeout(() => {
+			if (sockets[userId].isAuth) return;
+			ws.close();
+			delete sockets[userId]
+		}, 2000)			
   
 		const pingInterval = setInterval(() => {
       if (ws.readyState === WebSocket.OPEN) {
