@@ -8,7 +8,7 @@
         justify-content: center;
         align-items: center;
         opacity: 0;
-        animation: fadeIn 0.2s ease-in-out forwards;
+        animation: fadeIn 0.4s ease-in-out forwards;
       }
 
       @keyframes fadeIn {
@@ -48,11 +48,11 @@
   </head>
   <body>
     <div class="container">
-			<audio autoplay>
+			<audio id="alert-sound">
   			<source src="static/assets/new-follow.mp3" type="audio/mpeg">
   			Your browser does not support the audio element.
 			</audio> 
-			<video autoplay muted>
+			<video id="alert-vid">
         <source src="static/assets/new-follow.webm" />
         Your browser doesn't support the video tag.
       </video>
@@ -61,6 +61,25 @@
       </div>
     </div>
 
+		<script>
+			const setDelay = (id, delay) => {
+				const media = document.getElementById(id);
+				setTimeout(() => media?.play && media.play(), delay); 
+			}
+
+			setDelay('alert-vid', 700)
+			setDelay('alert-sound', 1700)
+
+			const usernameText = document.getElementById("username")
+			const video = document.getElementById("alert-vid")
+			video.addEventListener('ended', () => {
+   			video.style.transition = 'opacity 1s'; 
+  			video.style.opacity = 0; 			
+				usernameText.style.transition = 'opacity 1s'; 
+  			usernameText.style.opacity = 0;
+			});
+
+		</script>
     <script>
       const urlParams = new URLSearchParams(window.location.search);
       const username = urlParams.get("username");

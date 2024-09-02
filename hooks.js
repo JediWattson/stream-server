@@ -92,7 +92,6 @@ const webhook = ({ app, secret, socket }) => {
           "sha256=" +
           crypto.createHmac("sha256", secret).update(hmacMessage).digest("hex");
 
-        console.log(signature, expectedSignature);
         if (signature !== expectedSignature) {
           res.sendStatus(403);
           throw new Error("Invalid Twitch webhook signature");
