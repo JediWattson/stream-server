@@ -50,25 +50,33 @@ const subList = async ({ auth }) => {
 };
 
 const subEvent = async ({ auth, secret }) => {
-  const res = await fetch(
+	const headers = {
+  	Authorization: `Bearer ${auth.access_token}`,
+    "Client-Id": process.env.CLIENT_ID,
+		"Content-Type": "application/json",
+  }
+
+	const usersRes = await fetch('https://api.twitch.tv/helix/users?login=jediwattzon22', {
+		headers 
+	})
+
+	const users = await readAndParseStream(usersRes.body)
+	const userId = users.data[0]?.id
+	const res = await fetch(
     "https://api.twitch.tv/helix/eventsub/subscriptions",
     {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${auth.access_token}`,
-        "Content-Type": "application/json",
-        "Client-Id": process.env.CLIENT_ID,
-      },
+      headers,
       body: JSON.stringify({
         type: "channel.follow",
         version: 2,
         condition: {
-          broadCaster_user_id: process.env.BROADCASTER_USER_ID,
-          moderator_user_id: process.env.BROADCASTER_USER_ID,
+          broadCaster_user_id: userId,
+          moderator_user_id: userId
         },
         transport: {
           method: "webhook",
-          callback: `${process.env.CALLBACK_URL}`,
+          callback: `${process.env.CALLBACK_URL}/webhook`,
           secret,
         },
       }),
@@ -83,7 +91,6 @@ const webhook = ({ app, secret, socket }) => {
     "/webhook",
     express.json({
       verify: (req, res, buf) => {
-        console.log(secret);
         const messageId = req.header("Twitch-Eventsub-Message-Id");
         const timestamp = req.header("Twitch-Eventsub-Message-Timestamp");
         const signature = req.header("Twitch-Eventsub-Message-Signature");
@@ -102,7 +109,6 @@ const webhook = ({ app, secret, socket }) => {
 
   app.post("/webhook", (req, res) => {
     const messageType = req.header("Twitch-Eventsub-Message-Type");
-    console.log(messageType);
     const message = JSON.parse(req.body.toString());
     if (messageType === "webhook_callback_verification")
       return res.status(200).send(message.challenge);

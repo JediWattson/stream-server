@@ -34,7 +34,7 @@ app.get("/", async (req, res) => {
 
   res.render("auth", {
     clientId: process.env.CLIENT_ID,
-    redirectUri: process.env.CALLBACK_URL,
+    redirectUri: process.env.CALLBACK_URL + "/",
   });
 });
 
@@ -49,18 +49,21 @@ const init = async () => {
   const list = await subList({ auth });
   if (list.status > 399) return false;
 
-  if (!list.data?.length) {
-    const events = await subEvent({ auth, secret });
-    if (events.status > 399) return false;
-  }
-
   const disabledSubs = list.data?.filter((l) =>
-    ["webhook_callback_verification_pending", "enabled"].includes(l.status),
+    !["webhook_callback_verification_pending", "enabled"].includes(l.status),
   );
   if (disabledSubs.length > 0)
     await Promise.all(
       disabledSubs.map((sub) => delSub({ subId: sub.id, auth })),
     );
 
-  return true;
+  const availableSubs = list.data?.filter((l) =>
+    ["webhook_callback_verification_pending", "enabled"].includes(l.status),
+  );
+	if (!availableSubs.length) {
+    const events = await subEvent({ auth, secret });
+    if (events.status > 399) return false;
+  }
+  
+	return true;
 };
