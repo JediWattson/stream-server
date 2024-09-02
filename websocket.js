@@ -6,14 +6,13 @@ module.exports = ({ server }) => {
 
   wss.on("connection", (ws) => {
     socket.user = ws;
- 		const pingInterval = setInterval(() => {
-    	if (ws.readyState === WebSocket.OPEN) { 
-      	ws.ping(); 
-    	} else {
-      	clearInterval(pingInterval); 
-    	}
-  	}, 30000); 
-
+    const pingInterval = setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.ping();
+      } else {
+        clearInterval(pingInterval);
+      }
+    }, 30000);
 
     ws.on("close", () => {
       socket.user = null;

@@ -21,31 +21,29 @@ const token = async ({ secret }) => {
 };
 
 const delSub = async ({ auth, subId }) => {
-	const response = await fetch(
+  const response = await fetch(
     `https://api.twitch.tv/helix/eventsub/subscriptions?id=${subId}`,
-		{
-			method: "delete",
-			headers: {
-	      Authorization: `Bearer ${auth.access_token}`,
-  	    "Client-Id": process.env.CLIENT_ID,
-    	}
-		},
+    {
+      method: "delete",
+      headers: {
+        Authorization: `Bearer ${auth.access_token}`,
+        "Client-Id": process.env.CLIENT_ID,
+      },
+    },
   );
 
-	if (response.status !== 204)
-		throw Error("sub didn't delete :(")
+  if (response.status !== 204) throw Error("sub didn't delete :(");
 };
 
-
 const subList = async ({ auth }) => {
-	const response = await fetch(
-    "https://api.twitch.tv/helix/eventsub/subscriptions?type=channel.follow",						
-		{
-			headers: {
-	      Authorization: `Bearer ${auth.access_token}`,
-  	    "Client-Id": process.env.CLIENT_ID,
-    	}
-		},
+  const response = await fetch(
+    "https://api.twitch.tv/helix/eventsub/subscriptions?type=channel.follow",
+    {
+      headers: {
+        Authorization: `Bearer ${auth.access_token}`,
+        "Client-Id": process.env.CLIENT_ID,
+      },
+    },
   );
 
   return readAndParseStream(response.body);
@@ -85,18 +83,18 @@ const webhook = ({ app, secret, socket }) => {
     "/webhook",
     express.json({
       verify: (req, res, buf) => {
-				console.log(secret)
-				const messageId = req.header("Twitch-Eventsub-Message-Id");
+        console.log(secret);
+        const messageId = req.header("Twitch-Eventsub-Message-Id");
         const timestamp = req.header("Twitch-Eventsub-Message-Timestamp");
         const signature = req.header("Twitch-Eventsub-Message-Signature");
         const hmacMessage = messageId + timestamp + req.body;
-        const expectedSignature = "sha256=" + crypto.createHmac("sha256", secret)
-						.update(hmacMessage)
-						.digest("hex");
+        const expectedSignature =
+          "sha256=" +
+          crypto.createHmac("sha256", secret).update(hmacMessage).digest("hex");
 
-				console.log(signature, expectedSignature)
+        console.log(signature, expectedSignature);
         if (signature !== expectedSignature) {
-					res.sendStatus(403)
+          res.sendStatus(403);
           throw new Error("Invalid Twitch webhook signature");
         }
       },
@@ -105,8 +103,8 @@ const webhook = ({ app, secret, socket }) => {
 
   app.post("/webhook", (req, res) => {
     const messageType = req.header("Twitch-Eventsub-Message-Type");
-		console.log(messageType)
-		const message = JSON.parse(req.body.toString());
+    console.log(messageType);
+    const message = JSON.parse(req.body.toString());
     if (messageType === "webhook_callback_verification")
       return res.status(200).send(message.challenge);
 
@@ -121,7 +119,7 @@ const webhook = ({ app, secret, socket }) => {
     }
 
     res.sendStatus(204);
-	});
+  });
 };
 
 module.exports = { token, webhook, subEvent, subList, delSub };

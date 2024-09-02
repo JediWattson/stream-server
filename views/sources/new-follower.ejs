@@ -1,71 +1,76 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-<style>
-	.container {
-  	display: flex;
-  	position: relative; 
- 		justify-content: center; 
-  	align-items: center;    
-    opacity: 0; 
-    animation: fadeIn 0.2s ease-in-out forwards; 
-	}
+  <head>
+    <style>
+      .container {
+        display: flex;
+        position: relative;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        animation: fadeIn 0.2s ease-in-out forwards;
+      }
 
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
 
-	video {
-    height: auto;
-  }
+      video {
+        height: auto;
+      }
 
-  @font-face {
-		font-family: "jedi";
-	 	src: url('static/fonts/SfDistantGalaxy-0l3d.ttf') format('truetype');
-		font-weight: normal;
-		font-style: normal;
-  }
-  
-  .text-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -54%); 
-  }
+      @font-face {
+        font-family: "jedi";
+        src: url("static/fonts/SfDistantGalaxy-0l3d.ttf") format("truetype");
+        font-weight: normal;
+        font-style: normal;
+      }
 
-  .name {
-		font-family: "jedi";
-    color: white;
-    font-size: 69px; 
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
-  }
+      .text-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -54%);
+      }
 
-</style>
-</head>
-<body>
+      .name {
+        font-family: "jedi";
+        color: white;
+        font-size: 69px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+			<audio autoplay>
+  			<source src="static/assets/new-follow.mp3" type="audio/mpeg">
+  			Your browser does not support the audio element.
+			</audio> 
+			<video autoplay muted>
+        <source src="static/assets/new-follow.webm" />
+        Your browser doesn't support the video tag.
+      </video>
+      <div class="text-overlay">
+        <p class="name" id="username"></p>
+      </div>
+    </div>
 
-<div class="container">
-  <video autoplay muted>
-    <source src="static/assets/new-follow.webm"> 
-    Your browser doesn't support the video tag.
-  </video>
-  <div class="text-overlay">
-	<p class="name" id="username"></p>
-  </div>
-</div>
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const username = urlParams.get("username");
+      const usernameOverlay = document.getElementById("username");
 
-<script>
-  const urlParams = new URLSearchParams(window.location.search);
-  const username = urlParams.get('username');   
-  const usernameOverlay = document.getElementById('username');
-
-  if (username) {
-    usernameOverlay.textContent = username;
-  } else {
-    usernameOverlay.textContent = "Anon"; 
-  }
-</script>
-
-</body>
+      if (username) {
+        usernameOverlay.textContent = username;
+      } else {
+        usernameOverlay.textContent = "Anon";
+      }
+    </script>
+  </body>
 </html>

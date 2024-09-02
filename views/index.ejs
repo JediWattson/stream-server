@@ -1,163 +1,169 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js"></script>
-	<title>Famtrees - Stream</title>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js"></script>
+    <title>Famtrees - Stream</title>
 
-  <style>
-    #login-form {
-      display: flex;
-      flex-direction: column;
-      width: 300px;
-      margin: 0 auto;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
+    <style>
+      #login-form {
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
 
-    label {
-      margin-bottom: 5px;
-    }
+      label {
+        margin-bottom: 5px;
+      }
 
-    input[type="text"], input[type="password"] {
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-    }
+      input[type="text"],
+      input[type="password"] {
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+      }
 
-    button[type="submit"] {
-      background-color: #4CAF50; /* Green */
-      color: white;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
+      button[type="submit"] {
+        background-color: #4caf50; /* Green */
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
 
-    .status-indicator {
-      padding: 10px;
-      border-radius: 5px;
-      margin-bottom: 10px;
-    }
+      .status-indicator {
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+      }
 
-    .connected {
-      background-color: #4CAF50; /* Green */
-      color: white;
-    }
+      .connected {
+        background-color: #4caf50; /* Green */
+        color: white;
+      }
 
-    .disconnected {
-      background-color: #f44336; /* Red */
-      color: white;
-    }
+      .disconnected {
+        background-color: #f44336; /* Red */
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="login-form">
+      <h2>Connect to OBS</h2>
+      <label for="address">OBS Address:</label>
+      <input type="text" id="address" name="address" value="localhost:4444" />
 
-  </style>
-</head>
-<body>
-  <div id="login-form">
-    <h2>Connect to OBS</h2>
-    <label for="address">OBS Address:</label>
-    <input type="text" id="address" name="address" value="localhost:4444">
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" />
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password">
+      <button type="submit" id="connect-button">Connect</button>
+    </div>
 
-    <button type="submit" id="connect-button">Connect</button>
-  </div>
+    <div id="obs-status" class="status-indicator disconnected">
+      OBS: Disconnected
+    </div>
+    <div id="ws-server-status" class="status-indicator disconnected">
+      WebSocket Server: Disconnected
+    </div>
+    <script>
+      const wsServerStatus = document.getElementById("ws-server-status");
+      async function handleMessage(event) {
+        const payload = JSON.parse(event.data);
+        await window.obsSocket?.call("SetInputSettings", {
+          inputName: "new follow",
+          overlay: true,
+          inputSettings: {
+            url: `https://stream.famtrees.net/browser-source?sourcePath=sources/new-follower&username=${payload.data?.user_name}`,
+          },
+        });
 
-  <div id="obs-status" class="status-indicator disconnected">OBS: Disconnected</div>
-  <div id="ws-server-status" class="status-indicator disconnected">WebSocket Server: Disconnected</div>
-	<script>
-    const wsServerStatus = document.getElementById('ws-server-status');
-		async function handleMessage(event) {
-			const payload = JSON.parse(event.data)
-	   	await window.obsSocket?.call('SetInputSettings', { 
-				inputName: "new follow",
-				overlay: true,
-				inputSettings: {
-					url: `https://stream.famtrees.net/browser-source?sourcePath=sources/new-follower&username=${payload.data?.user_name}`		
-				}
-			})
-			
-			const id = await window.obsSocket?.call('GetSceneItemId', {
-				sceneName: "Main",
-				sourceName: "new follow"
-			})
-			
-			await window.obsSocket?.call('SetSceneItemEnabled', { 
-				sceneName: "Main",
-				sceneItemEnabled: true,
-				...id
-			})
+        const id = await window.obsSocket?.call("GetSceneItemId", {
+          sceneName: "Main",
+          sourceName: "new follow",
+        });
 
-			setTimeout(() => {
-				window.obsSocket?.call('SetSceneItemEnabled', {
-					...id,
-					sceneName: "Main",
-					sceneItemEnabled: false,
-				})
-			}, 1000*10.2)
-		}
+        await window.obsSocket?.call("SetSceneItemEnabled", {
+          sceneName: "Main",
+          sceneItemEnabled: true,
+          ...id,
+        });
 
-		let websocket;
-		let reconnectAttempts = 0;
-		const maxReconnectAttempts = 10; // Adjust as needed
+        setTimeout(() => {
+          window.obsSocket?.call("SetSceneItemEnabled", {
+            ...id,
+            sceneName: "Main",
+            sceneItemEnabled: false,
+          });
+        }, 1000 * 10.2);
+      }
 
+      let websocket;
+      let reconnectAttempts = 0;
+      const maxReconnectAttempts = 10; // Adjust as needed
 
-		function connect() {
-		 	websocket = new WebSocket("<%= websocketUrl %>"); 
-  		websocket.onopen = function(event) {
-				reconnectAttempts = 0
-	    	wsServerStatus.textContent = 'WebSocket Server: Connected';
-        wsServerStatus.classList.remove('disconnected');
-        wsServerStatus.classList.add('connected');
-  		};
+      function connect() {
+        websocket = new WebSocket("<%= websocketUrl %>");
+        websocket.onopen = function (event) {
+          reconnectAttempts = 0;
+          wsServerStatus.textContent = "WebSocket Server: Connected";
+          wsServerStatus.classList.remove("disconnected");
+          wsServerStatus.classList.add("connected");
+        };
 
-			websocket.onping = () => {
-				websocket.pong();
-	  	};
+        websocket.onping = () => {
+          websocket.pong();
+        };
 
-	  	websocket.onmessage = async function(event) {
-				handleMessage(event)
-			}
+        websocket.onmessage = async function (event) {
+          handleMessage(event);
+        };
 
-	  	websocket.onclose = function(event) {
-				wsServerStatus.textContent = 'WebSocket Server: Reconnecting';
-    	  wsServerStatus.classList.remove('connected');
-      	wsServerStatus.classList.add('disconnected');
-				
-				reconnectAttempts++;
-		    if (reconnectAttempts <= maxReconnectAttempts) {
-    		  const delay = Math.min(Math.pow(2, reconnectAttempts) * 1000, 30000); // Exponential backoff with max delay of 30 seconds
-      		setTimeout(connect, delay);
-    		} else {
-					wsServerStatus.textContent = 'WebSocket Server: Disconnected';
-    		}
-	  	};
+        websocket.onclose = function (event) {
+          wsServerStatus.textContent = "WebSocket Server: Reconnecting";
+          wsServerStatus.classList.remove("connected");
+          wsServerStatus.classList.add("disconnected");
 
-			websocket.onerror = function(event) {
-				console.error("WebSocket error occurred:", event);
-  		};
-		}
+          reconnectAttempts++;
+          if (reconnectAttempts <= maxReconnectAttempts) {
+            const delay = Math.min(
+              Math.pow(2, reconnectAttempts) * 1000,
+              30000,
+            ); // Exponential backoff with max delay of 30 seconds
+            setTimeout(connect, delay);
+          } else {
+            wsServerStatus.textContent = "WebSocket Server: Disconnected";
+          }
+        };
 
-		connect()
-	</script>
-	<script>	
- 		window.obsSocket = new OBSWebSocket();
-		const connectButton = document.getElementById('connect-button');
-    const addressInput = document.getElementById('address');
-    const passwordInput = document.getElementById('password');
+        websocket.onerror = function (event) {
+          console.error("WebSocket error occurred:", event);
+        };
+      }
 
-    connectButton.addEventListener('click', async () => {
-      const address = addressInput.value;
-      const password = passwordInput.value;
-			
-      await window.obsSocket.connect(address, password)
-	    const obsStatus = document.getElementById('obs-status');
-      obsStatus.textContent = 'OBS: Connected';
-      obsStatus.classList.remove('disconnected');
-      obsStatus.classList.add('connected');
-		});
-  </script>
-</body>
+      connect();
+    </script>
+    <script>
+      window.obsSocket = new OBSWebSocket();
+      const connectButton = document.getElementById("connect-button");
+      const addressInput = document.getElementById("address");
+      const passwordInput = document.getElementById("password");
+
+      connectButton.addEventListener("click", async () => {
+        const address = addressInput.value;
+        const password = passwordInput.value;
+
+        await window.obsSocket.connect(address, password);
+        const obsStatus = document.getElementById("obs-status");
+        obsStatus.textContent = "OBS: Connected";
+        obsStatus.classList.remove("disconnected");
+        obsStatus.classList.add("connected");
+      });
+    </script>
+  </body>
 </html>
