@@ -56,13 +56,16 @@
   <body>
     <div id="login-form">
       <h2>Connect to OBS</h2>
-      <label for="address">OBS Address:</label>
-      <input type="text" id="address" name="address" value="localhost:4444" />
+   		<label for="address">secret:</label>
+      <input type="text" id="secretKey" />
+			<button id="secretButton">Connect</button>
 
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" />
+     	<label for="address">OBS Address:</label>
+     	<input type="text" id="address" />
 
-      <button type="submit" id="connect-button">Connect</button>
+     	<label for="password">Password:</label>
+     	<input type="password" id="password" />
+    	<button id="connectButton">Connect</button>
     </div>
 
     <div id="obs-status" class="status-indicator disconnected">
@@ -73,8 +76,7 @@
     </div>
     <script>
       const wsServerStatus = document.getElementById("ws-server-status");
-      async function handleMessage(event) {
-        const payload = JSON.parse(event.data);
+      async function handleMessage(payload) {
         await window.obsSocket?.call("SetInputSettings", {
           inputName: "new follow",
           overlay: true,
@@ -100,57 +102,88 @@
             sceneName: "Main",
             sceneItemEnabled: false,
           });
-        }, 1000 * 14);
+        }, 1000 * 7);
       }
 
-      let websocket;
-      let reconnectAttempts = 0;
-      const maxReconnectAttempts = 10; // Adjust as needed
-
-      function connect() {
-        websocket = new WebSocket("<%= websocketUrl %>");
-        websocket.onopen = function (event) {
-          reconnectAttempts = 0;
-          wsServerStatus.textContent = "WebSocket Server: Connected";
-          wsServerStatus.classList.remove("disconnected");
-          wsServerStatus.classList.add("connected");
-        };
-
-        websocket.onping = () => {
-          websocket.pong();
-        };
-
-        websocket.onmessage = async function (event) {
-          handleMessage(event);
-        };
-
-        websocket.onclose = function (event) {
+			const setDisconnected = () => {
           wsServerStatus.textContent = "WebSocket Server: Reconnecting";
           wsServerStatus.classList.remove("connected");
           wsServerStatus.classList.add("disconnected");
+			}
 
-          reconnectAttempts++;
+			const setConnected = () => {
+				  wsServerStatus.textContent = "WebSocket Server: Connected";
+          wsServerStatus.classList.remove("disconnected");
+          wsServerStatus.classList.add("connected");
+			}
+
+      let websocket;
+			let connected;
+      let reconnectAttempts = 0;
+      const maxReconnectAttempts = 10; 
+      function connect() {
+				setDisconnected()
+				wsServerStatus.textContent = "WebSocket Server: Authenticating";
+
+				const token = document.getElementById('secretKey').value || "";
+				websocket = new WebSocket("<%= websocketUrl %>");
+
+				websocket.onmessage = async function (event) {
+					const data =  JSON.parse(event?.data);
+					if (data.type === "verify-with-id") {
+						const res = await fetch('/verify', {
+							method: "POST",
+					    headers: {
+								'Authorization': `Bearer ${token}`,
+				        'Content-Type': 'application/json' 
+    					},
+							body: JSON.stringify({ userId: data.userId })
+						})
+
+						if (res.status !== 200)
+							setDisconnected()
+						return
+					}
+
+					handleMessage(data);
+        };
+
+        websocket.onopen = function (event) {
+          reconnectAttempts = 0;
+					connected = true
+					setConnected()
+       	};
+ 
+        websocket.onclose = function (event) {
+					websocket = null
+					reconnectAttempts++;
+					connected = false
+					setDisconnected()
           if (reconnectAttempts <= maxReconnectAttempts) {
             const delay = Math.min(
               Math.pow(2, reconnectAttempts) * 1000,
               30000,
-            ); // Exponential backoff with max delay of 30 seconds
-            setTimeout(connect, delay);
+            );
+						setTimeout(() => !connected &&  connect(), delay);
           } else {
             wsServerStatus.textContent = "WebSocket Server: Disconnected";
           }
+        };
+
+				websocket.onping = () => {
+          websocket.pong();
         };
 
         websocket.onerror = function (event) {
           console.error("WebSocket error occurred:", event);
         };
       }
-
-      connect();
+			
+			secretButton.addEventListener('click', () => !connected && connect())
     </script>
     <script>
       window.obsSocket = new OBSWebSocket();
-      const connectButton = document.getElementById("connect-button");
+      const connectButton = document.getElementById("connectButton");
       const addressInput = document.getElementById("address");
       const passwordInput = document.getElementById("password");
 

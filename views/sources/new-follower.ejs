@@ -41,7 +41,7 @@
       .name {
         font-family: "jedi";
         color: white;
-        font-size: 69px;
+        font-size: 47px;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
       }
     </style>
@@ -72,6 +72,8 @@
 
 			const usernameText = document.getElementById("username")
 			const video = document.getElementById("alert-vid")
+			
+			video.playbackRate = 2
 			video.addEventListener('ended', () => {
    			video.style.transition = 'opacity 1s'; 
   			video.style.opacity = 0; 			

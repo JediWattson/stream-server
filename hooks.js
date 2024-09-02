@@ -20,6 +20,21 @@ const token = async ({ secret }) => {
   return readAndParseStream(res.body);
 };
 
+const getUserId = async ({ auth }) => {
+	const headers = {
+  	Authorization: `Bearer ${auth.access_token}`,
+    "Client-Id": process.env.CLIENT_ID,
+		"Content-Type": "application/json",
+  }
+
+	const usersRes = await fetch('https://api.twitch.tv/helix/users?login=jediwattzon22', {
+		headers 
+	})
+	const users = await readAndParseStream(usersRes.body)
+	return users.data[0]?.id
+
+}
+
 const delSub = async ({ auth, subId }) => {
   const response = await fetch(
     `https://api.twitch.tv/helix/eventsub/subscriptions?id=${subId}`,
@@ -50,18 +65,7 @@ const subList = async ({ auth }) => {
 };
 
 const subEvent = async ({ auth, secret }) => {
-	const headers = {
-  	Authorization: `Bearer ${auth.access_token}`,
-    "Client-Id": process.env.CLIENT_ID,
-		"Content-Type": "application/json",
-  }
-
-	const usersRes = await fetch('https://api.twitch.tv/helix/users?login=jediwattzon22', {
-		headers 
-	})
-
-	const users = await readAndParseStream(usersRes.body)
-	const userId = users.data[0]?.id
+	const userId = getUserId(auth)
 	const res = await fetch(
     "https://api.twitch.tv/helix/eventsub/subscriptions",
     {
@@ -86,8 +90,8 @@ const subEvent = async ({ auth, secret }) => {
   return readAndParseStream(res.body);
 };
 
-const webhook = ({ app, secret, socket }) => {
-  app.use(
+const webhook = ({ app, secret, sockets }) => {
+	app.use(
     "/webhook",
     express.json({
       verify: (req, res, buf) => {
@@ -106,25 +110,29 @@ const webhook = ({ app, secret, socket }) => {
       },
     }),
   );
-
+	
   app.post("/webhook", (req, res) => {
     const messageType = req.header("Twitch-Eventsub-Message-Type");
-    const message = JSON.parse(req.body.toString());
+    const message = req.body;
     if (messageType === "webhook_callback_verification")
       return res.status(200).send(message.challenge);
-
-    if (messageType === "notification") {
-      const eventType = message.subscription.type;
+		
+		if (messageType === "notification") {		
+			const eventType = message.subscription.type;
       const eventData = message.event;
-      const messageToSend = JSON.stringify({
+    	const userId = eventData.broadcaster_user_id 
+			const user = sockets[userId]
+			if (!user?.isAuth) return;
+				
+			const messageToSend = JSON.stringify({
         type: eventType,
         data: eventData,
       });
-      socket.user.send(messageToSend);
+      user.socket.send(messageToSend);
     }
 
     res.sendStatus(204);
   });
 };
 
-module.exports = { token, webhook, subEvent, subList, delSub };
+module.exports = { token, webhook, subEvent, subList, delSub, getUserId };
