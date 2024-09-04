@@ -1,21 +1,21 @@
 <!doctype html>
 <html>
   <head>
+    <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js"></script>
     <title>Famtrees - Stream</title>
 		<link rel="stylesheet" href="static/main.css"></link>
-    <script src="static/ws-stream.js" defer></script>
-    <script src="static/obs-ws-controller.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js"></script>
+    <script defer src="static/ws-stream.js"></script>
+    <script defer src="static/obs-ws-controller.js"></script>
 	</head>
   <body>
     <div id="login-form">
       <h2>Connect to OBS</h2>
-      <label for="secretKey">secret:</label>
+      <label for="address">secret:</label>
       <input type="text" id="secretKey" />
       <button id="secretButton">Connect</button>
 
-      <label for="obsUrl">OBS Address:</label>
-      <input type="text" id="obsUrl" />
+      <label for="address">OBS Address:</label>
+      <input type="text" id="address" />
 
       <label for="password">Password:</label>
       <input type="password" id="password" />
@@ -28,14 +28,5 @@
     <div id="ws-server-status" class="status-indicator disconnected">
       WebSocket Server: Disconnected
     </div>
-		<div class="subscription-list">
-				
-				<div id="subscriptions" style="display: none;">
-					<h2>List of Subscriptions</h2>
-					<ul id="sub-list"></ul>
-				</div>
-			 	<p id="no-subs" style="display: none;">No Subscriptions Available</p>
-		</div>
-
 	</body>
 </html>

@@ -1,8 +1,7 @@
 const crypto = require("crypto");
 const express = require("express");
-const secret = crypto.randomBytes(32).toString("hex");
-
 const { readAndParseStream } = require("./helpers");
+const secret = crypto.randomBytes(32).toString("hex");
 
 const token = async ({ secret }) => {
   const data = new URLSearchParams({
@@ -21,19 +20,21 @@ const token = async ({ secret }) => {
 };
 
 const getUserId = async ({ auth }) => {
-	const headers = {
-  	Authorization: `Bearer ${auth.access_token}`,
+  const headers = {
+    Authorization: `Bearer ${auth.access_token}`,
     "Client-Id": process.env.CLIENT_ID,
-		"Content-Type": "application/json",
-  }
+    "Content-Type": "application/json",
+  };
 
-	const usersRes = await fetch('https://api.twitch.tv/helix/users?login=jediwattzon22', {
-		headers 
-	})
-	const users = await readAndParseStream(usersRes.body)
-	return users.data[0]?.id
-
-}
+  const usersRes = await fetch(
+    "https://api.twitch.tv/helix/users?login=jediwattzon22",
+    {
+      headers,
+    },
+  );
+  const users = await readAndParseStream(usersRes.body);
+  return users.data[0]?.id;
+};
 
 const delSub = async ({ auth, subId }) => {
   const response = await fetch(
@@ -65,8 +66,8 @@ const subList = async ({ auth }) => {
 };
 
 const subEvent = async ({ auth, secret }) => {
-	const userId = getUserId(auth)
-	const res = await fetch(
+  const userId = getUserId(auth);
+  const res = await fetch(
     "https://api.twitch.tv/helix/eventsub/subscriptions",
     {
       method: "POST",
@@ -76,7 +77,7 @@ const subEvent = async ({ auth, secret }) => {
         version: 2,
         condition: {
           broadCaster_user_id: userId,
-          moderator_user_id: userId
+          moderator_user_id: userId,
         },
         transport: {
           method: "webhook",
@@ -91,7 +92,7 @@ const subEvent = async ({ auth, secret }) => {
 };
 
 const webhook = ({ app, secret, sockets }) => {
-	app.use(
+  app.use(
     "/webhook",
     express.json({
       verify: (req, res, buf) => {
@@ -110,21 +111,21 @@ const webhook = ({ app, secret, sockets }) => {
       },
     }),
   );
-	
+
   app.post("/webhook", (req, res) => {
     const messageType = req.header("Twitch-Eventsub-Message-Type");
     const message = req.body;
     if (messageType === "webhook_callback_verification")
       return res.status(200).send(message.challenge);
-		
-		if (messageType === "notification") {		
-			const eventType = message.subscription.type;
+
+    if (messageType === "notification") {
+      const eventType = message.subscription.type;
       const eventData = message.event;
-    	const userId = eventData.broadcaster_user_id 
-			const user = sockets[userId]
-			if (!user?.isAuth) return;
-				
-			const messageToSend = JSON.stringify({
+      const userId = eventData.broadcaster_user_id;
+      const user = sockets[userId];
+      if (!user?.isAuth) return;
+
+      const messageToSend = JSON.stringify({
         type: eventType,
         data: eventData,
       });
