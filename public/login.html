@@ -1,0 +1,66 @@
+<html>
+  <style>
+    .container {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+    .login-form-paper {
+      width: 420px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .login-form-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+  </style>
+
+  <body>
+    <div class="container">
+      <div class="login-form-paper">
+        <div class="login-form-fields">
+          <text-field id="token">
+            <span slot="label">Token:</span>
+          </text-field>
+          <submit-button id="token-submit">
+            <span slot="label">Connect</span>
+          </submit-button>
+        </div>
+        <div class="login-form-fields">
+          <text-field id="obs-url">
+            <span slot="label">Obs Url:</span>
+          </text-field>
+           <text-field id="obs-password" type="password">
+            <span slot="label">Password:</span>
+          </text-field>       
+          <submit-button id="obs-submit">
+            <span slot="label">connect</span>
+          </submit-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <status-indicator id="action-stream-status">
+        <span slot="title">Action Stream</span>
+      </status-indicator>
+
+      <status-indicator id="obs-status">
+        <span slot="title">Obs</span>
+      </status-indicator>
+	  </div>
+
+    <div class="subscription-list">	
+	    <div id="subscriptions" style="display: none;">
+			  <h2>List of Subscriptions</h2>
+				<ul id="sub-list"></ul>
+			</div>
+			<p id="no-subs" style="display: none;">No Subscriptions Available</p>
+		</div>
+
+  </body>
+</html>

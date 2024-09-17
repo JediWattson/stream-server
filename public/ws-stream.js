@@ -1,11 +1,21 @@
+const actionStreamStatus = document.getElementById("action-stream-status");
+const setDisconnected = () => {
+  actionStreamStatus.status = statusStatesEnum.DISCONNECTED
+};
+
+const setConnected = () => {
+  actionStreamStatus.status = statusStatesEnum.CONNECTED
+};
+
+
 let websocket;
 let connected;
 let reconnectAttempts = 0;
 const maxReconnectAttempts = 10;
 
 async function connect() {
-  const token = document.getElementById("secretKey").value || "";
-	const headers = {
+  const token = document.getElementById("token")
+  const headers = {
 	  Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
  	}  
@@ -79,6 +89,6 @@ async function connect() {
   };
 }
 
-const button = document.getElementById("secretButton");
+const button = document.getElementById("token-submit");
 button.addEventListener("click", () => !connected && connect());
 

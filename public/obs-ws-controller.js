@@ -1,5 +1,4 @@
-const wsServerStatus = document.getElementById("ws-server-status");
-window.handleMessage = async (payload) => {
+const handleMessage = async (payload) => {
   await window.obsSocket?.call("SetInputSettings", {
     inputName: "new follow",
     overlay: true,
@@ -28,34 +27,16 @@ window.handleMessage = async (payload) => {
   }, 1000 * 7);
 };
 
-const setDisconnected = () => {
-  wsServerStatus.textContent = "WebSocket Server: Reconnecting";
-  wsServerStatus.classList.remove("connected");
-  wsServerStatus.classList.add("disconnected");
-};
-
-const setConnected = () => {
-  wsServerStatus.textContent = "WebSocket Server: Connected";
-  wsServerStatus.classList.remove("disconnected");
-  wsServerStatus.classList.add("connected");
-};
-
-window.obsSocket = new OBSWebSocket();
-const connectButton = document.getElementById("connectButton");
-
+const obsSocket = new OBSWebSocket();
+const connectButton = document.getElementById("obs-submit");
+const obsStatus = document.getElementById("obs-status");
 connectButton.addEventListener("click", async () => {
- 	const obsUrl = document.getElementById("obsUrl").value;
-	const password = document.getElementById("password").value;
-  await window.obsSocket.connect(obsUrl, password);
+ 	const obsUrl = document.getElementById("obs-url").value;
+	const password = document.getElementById("obs-password").value;
+	await window.obsSocket.connect(obsUrl, password);
   
-	const obsStatus = document.getElementById("obs-status");
-  obsStatus.textContent = "OBS: Connected";
-  obsStatus.classList.remove("disconnected");
-  obsStatus.classList.add("connected");
-
+  obsStatus.status = statusStatesEnum.CONNECTED
   window.obsSocket.on("ConnectionClosed", () => {
-    obsStatus.textContent = "OBS: Disconnected";
-    obsStatus.classList.add("disconnected");
-    obsStatus.classList.remove("connected");
+    obsStatus.status = statusStatesEnum.DISCONNECTED
   });
 });

@@ -1,41 +1,56 @@
 <!doctype html>
 <html>
+
   <head>
     <title>Famtrees - Stream</title>
 		<link rel="stylesheet" href="static/main.css"></link>
-    <script src="static/ws-stream.js" defer></script>
-    <script src="static/obs-ws-controller.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js"></script>
-	</head>
+  </head>
+
   <body>
-    <div id="login-form">
-      <h2>Connect to OBS</h2>
-      <label for="secretKey">secret:</label>
-      <input type="text" id="secretKey" />
-      <button id="secretButton">Connect</button>
+   <script>
+			const makeScriptElement = (src) => {
+				const script = document.createElement('script')
+        script.setAttribute('src', src)
+        document.body.append(script)
+			}
+		  
+			const parser = new DOMParser()
+      
+      const parseHtmlFromRes = async (res) => {
+        const htmlText = await res.text()
+        const domModule = parser.parseFromString(htmlText, "text/html")
+        const headChildren = Array.from(domModule.head.children)
+        headChildren.forEach(child => {
+          if(child.tagName !== "STYLE") return
+          
+          document.head.append(child)
+        })
 
-      <label for="obsUrl">OBS Address:</label>
-      <input type="text" id="obsUrl" />
 
-      <label for="password">Password:</label>
-      <input type="password" id="password" />
-      <button id="connectButton">Connect</button>
-    </div>
+        const childArr = Array.from(domModule.body.children)
+        childArr.forEach(child => {
+          if (child.tagName === "SCRIPT") {
+						makeScriptElement(child.src)
+            return
+          }
 
-    <div id="obs-status" class="status-indicator disconnected">
-      OBS: Disconnected
-    </div>
-    <div id="ws-server-status" class="status-indicator disconnected">
-      WebSocket Server: Disconnected
-    </div>
-		<div class="subscription-list">
-				
-				<div id="subscriptions" style="display: none;">
-					<h2>List of Subscriptions</h2>
-					<ul id="sub-list"></ul>
-				</div>
-			 	<p id="no-subs" style="display: none;">No Subscriptions Available</p>
-		</div>
+          document.body.append(child)
+        })
+      }
 
-	</body>
+      const init = async () => {
+        const uiRes = await fetch('static/form.html')
+        await parseHtmlFromRes(uiRes)
+        const pageRes = await fetch('static/login.html')
+        await parseHtmlFromRes(pageRes)
+			
+				makeScriptElement('static/ws-stream.js')
+				makeScriptElement('static/obs-ws-controller.js')
+      }
+
+      init()
+    </script>
+  
+  </body>
 </html>

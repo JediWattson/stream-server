@@ -8,10 +8,12 @@ const { subList, token, getUserId } = require("./hooks");
 const sockets = {};
 module.exports = ({ app, server, secret }) => {
   const wss = new WebSocket.Server({ server });
-
+  
   app.post("/verify", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1];
     const userId = req.body.userId;
+
+    console.log(process.env.NODE_ENV  === "production")
 
     try {
       const decoded = jwt.verify(token, process.env.TOKEN_SECRET);

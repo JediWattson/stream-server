@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <style>      
+      text-field:defined {
+        display: flex;
+        flex-direction: column;
+      }
+
+      status-indicator:defined {
+        border-radius: 5%;
+        padding: 10px;
+        text-align: center;
+        width: 130px;
+        color: white;
+      }
+    
+      status-indicator:state(disconnected) {
+        background: red;
+      }
+      
+      status-indicator:state(connected) {
+        background: green;
+      }
+    </style>
+  </head>
+  <body>
+    <template id="submit-button-template">
+      <button id="submit-button">
+        <slot name="label">label</slot>
+      </button>
+    </template>
+
+    <template id="text-field-template">
+      <label for="text-input">
+        <slot name="label">label needed</slot>
+      </label>
+      <input type="text" id="text-input" />
+    </template>
+
+    <template id="status-indicator-template">
+      <slot name="title"></slot>
+    </template>
+
+    <script src="static/form.js"></script>
+  </body>
+</html>
+
+

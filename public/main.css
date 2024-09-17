@@ -1,55 +1,67 @@
-      #login-form {
-        display: flex;
-        flex-direction: column;
-        width: 300px;
-        margin: 0 auto;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-      }
+body {
+  background: #082136;
+  color: #ababc5;
+  margin: 0;
+}
 
-      label {
-        margin-bottom: 5px;
-      }
+#login-form {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  gap: 16px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
 
-      input[type="text"],
-      input[type="password"] {
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-      }
+label {
+  margin-bottom: 5px;
+}
 
-      button[type="submit"] {
-        background-color: #4caf50; /* Green */
-        color: white;
-        padding: 12px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
+input[type="text"],
+input[type="password"] {
+  background: #1a4b75;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
 
-      .status-indicator {
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 10px;
-      }
+button[type="submit"] {
+  background-color: #4caf50; /* Green */
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
 
-      .connected {
-        background-color: #4caf50; /* Green */
-        color: white;
-      }
+.status-indicator {
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
 
-      .disconnected {
-        background-color: #f44336; /* Red */
-        color: white;
-      }
+.connected {
+  background-color: #4caf50; /* Green */
+  color: white;
+}
 
+.disconnected {
+  background-color: #f44336; /* Red */
+  color: white;
+}
 
 .indicator {
-    display: inline-block;
-    width: 10px; /* Adjust as needed */
-    height: 10px;
-    margin-left: 5px;
-    border-radius: 50%; /* Make it circular */
+  display: inline-block;
+  width: 10px; /* Adjust as needed */
+  height: 10px;
+  margin-left: 5px;
+  border-radius: 50%; /* Make it circular */
+}
+
+.stack-vert {
+  display: flex;
+  flex-direction: column;
 }
