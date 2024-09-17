@@ -1,5 +1,5 @@
 const handleMessage = async (payload) => {
-  await window.obsSocket?.call("SetInputSettings", {
+  await obsSocket?.call("SetInputSettings", {
     inputName: "new follow",
     overlay: true,
     inputSettings: {
@@ -7,19 +7,19 @@ const handleMessage = async (payload) => {
     },
   });
 
-  const id = await window.obsSocket?.call("GetSceneItemId", {
+  const id = await obsSocket?.call("GetSceneItemId", {
     sceneName: "Main",
     sourceName: "new follow",
   });
 
-  await window.obsSocket?.call("SetSceneItemEnabled", {
+  await obsSocket?.call("SetSceneItemEnabled", {
     sceneName: "Main",
     sceneItemEnabled: true,
     ...id,
   });
 
   setTimeout(() => {
-    window.obsSocket?.call("SetSceneItemEnabled", {
+    obsSocket?.call("SetSceneItemEnabled", {
       ...id,
       sceneName: "Main",
       sceneItemEnabled: false,
@@ -33,10 +33,10 @@ const obsStatus = document.getElementById("obs-status");
 connectButton.addEventListener("click", async () => {
  	const obsUrl = document.getElementById("obs-url").value;
 	const password = document.getElementById("obs-password").value;
-	await window.obsSocket.connect(obsUrl, password);
+	await obsSocket.connect(obsUrl, password);
   
   obsStatus.status = statusStatesEnum.CONNECTED
-  window.obsSocket.on("ConnectionClosed", () => {
+  obsSocket.on("ConnectionClosed", () => {
     obsStatus.status = statusStatesEnum.DISCONNECTED
   });
 });

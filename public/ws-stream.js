@@ -43,7 +43,6 @@ async function connect() {
 	});
 
 	setDisconnected();
-  wsServerStatus.textContent = "WebSocket Server: Authenticating";
 	websocket = new WebSocket("/ws");	
   websocket.onmessage = async function (event) {
     const data = JSON.parse(event?.data);
@@ -75,8 +74,6 @@ async function connect() {
     if (reconnectAttempts <= maxReconnectAttempts) {
       const delay = Math.min(Math.pow(2, reconnectAttempts) * 1000, 30000);
       setTimeout(() => !connected && connect(), delay);
-    } else {
-      wsServerStatus.textContent = "WebSocket Server: Disconnected";
     }
   };
 
