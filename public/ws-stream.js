@@ -14,7 +14,7 @@ let reconnectAttempts = 0;
 const maxReconnectAttempts = 10;
 
 async function connect() {
-  const token = document.getElementById("token")
+  const token = document.getElementById("token").value
   const headers = {
 	  Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
@@ -57,7 +57,7 @@ async function connect() {
       return;
     }
 
-    window.handleMessage(data);
+    handleMessage(data);
   };
 
   websocket.onopen = function (event) {
