@@ -21,6 +21,21 @@
       status-indicator:state(connected) {
         background: green;
       }
+
+
+      list-container:defined {
+        flex: 1;
+        padding: 0 32px;
+      }
+
+      list-container:state(empty) {
+        display: none;
+      }
+      
+      list-container:state(not-empty) {
+        display: block;
+      }
+
     </style>
   </head>
   <body>
@@ -39,6 +54,18 @@
 
     <template id="status-indicator-template">
       <slot name="title"></slot>
+    </template>
+
+    <template id="list-container-template">
+      <h2>
+        <slot name="title"></slot>
+      </h2>
+      <div id="container"></div>
+    </template>
+
+    <template id="list-item-indicator-template">
+      <slot name="label"></slot>
+      <div id="status"></div>
     </template>
 
     <script src="static/form.js"></script>

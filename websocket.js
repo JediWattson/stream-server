@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const { v4: uuidV4 } = require("uuid");
 const { subList, token, getUserId } = require("./hooks");
 
+const isNotDevelop = process.env.NODE_ENV !== 'develop'
 const sockets = {};
 module.exports = ({ app, server, secret }) => {
   const wss = new WebSocket.Server({ server });
@@ -13,13 +14,12 @@ module.exports = ({ app, server, secret }) => {
     const token = req.headers.authorization?.split(" ")[1];
     const userId = req.body.userId;
 
-    console.log(process.env.NODE_ENV  === "production")
-
     try {
-      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-      sockets[userId].isAuth = true;
+      if (isNotDevelop) 
+        jwt.verify(token, process.env.token_secret);
+  
 
-//      const list = await subList({});
+      sockets[userId].isAuth = true;
       res.sendStatus(200);
     } catch (err) {
       console.error(err);
@@ -28,8 +28,12 @@ module.exports = ({ app, server, secret }) => {
   });
 
   wss.on("connection", async (ws, req) => {
-    const auth = await token({ secret });
-    const userId = await getUserId({ auth });
+    let userId = "1"
+    if (isNotDevelop) {
+      const auth = await token({ secret });
+      userId = await getUserId({ auth });
+    }
+
     sockets[userId] = { socket: ws, isAuth: false };
     ws.send(
       JSON.stringify({
@@ -41,7 +45,7 @@ module.exports = ({ app, server, secret }) => {
     ws.on("close", () => {
       if (sockets[userId]) delete sockets[userId];
     });
-
+    
     const authTimeout = setTimeout(() => {
       if (sockets[userId].isAuth) return;
       ws.close();

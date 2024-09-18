@@ -1,6 +1,9 @@
+const subscriptions = document.getElementById("subscriptions")
 const actionStreamStatus = document.getElementById("action-stream-status");
+
 const setDisconnected = () => {
   actionStreamStatus.status = statusStatesEnum.DISCONNECTED
+  subscriptions.empty()
 };
 
 const setConnected = () => {
@@ -20,29 +23,12 @@ async function connect() {
     "Content-Type": "application/json",
  	}  
 	
-	const res = await fetch("/subscription-list", { headers });
-	const list = await res.json()
-	const listContainerElement = document.getElementById("subscriptions")
-	const listElement = document.getElementById('sub-list') 
+  //const res = await fetch("/subscription-list", { headers });
+	//const list = await res.json()
+ 
+  const list = [{ type: "new-follower-event", label: "New Follower Event" }]
+  subscriptions.data = list
 
-	while (listElement.lastElementChild) {
-   	listElement.removeChild(listElement.lastElementChild);
- 	}
-	
-	listContainerElement.style.display = 'Block'
-	list.forEach(item => {
-  	const listItem = document.createElement("li");
-		const indicator = document.createElement("span");
-						
-		indicator.classList.add("indicator");
-		indicator.style.backgroundColor = "green";
-		indicator.id = item.type;
-   	listItem.textContent = item.label;
-   	listItem.appendChild(indicator);
-		listElement.appendChild(listItem);
-	});
-
-	setDisconnected();
 	websocket = new WebSocket("/ws");	
   websocket.onmessage = async function (event) {
     const data = JSON.parse(event?.data);
