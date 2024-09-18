@@ -19,12 +19,33 @@ const statusStatesEnum = {
 }
 
 const status = 'status-indicator'
+const statusIndicatorSheet = new CSSStyleSheet()
+statusIndicatorSheet.replaceSync(`
+  :host {
+    border-radius: 5%;
+    padding: 10px;
+    text-align: center;
+    width: 130px;
+    color: white;
+  }
+
+  :host(:state(disconnected)) {
+    background: red;
+  }
+  
+  :host(:state(connected)) {
+    background: green;
+  }
+`)
+
 class StatusElement extends HTMLElement {
 	constructor() {
 		super()
 		const template = document.getElementById(`${status}-template`).content
 		const shadowRoot = this.attachShadow({ mode: "open" })
 		shadowRoot.appendChild(template.cloneNode(true))
+		shadowRoot.adoptedStyleSheets = [statusIndicatorSheet]
+
     this._internals = this.attachInternals()
 	  this._internals.states.add(statusStatesEnum.DISCONNECTED)
   }
@@ -37,13 +58,23 @@ class StatusElement extends HTMLElement {
 
 customElements.define(status, StatusElement)
 
+
 const textField = 'text-field'
+const textFieldSheet = new CSSStyleSheet()
+textFieldSheet.replaceSync(`
+  :host {
+    display: flex;
+    flex-direction: column;
+  }
+`)
+
 class TextFieldElement extends HTMLElement {
 	constructor() {
 		super()
 		const template = document.getElementById(`${textField}-template`).content
 		const shadowRoot = this.attachShadow({ mode: "open" })
-		shadowRoot.appendChild(template.cloneNode(true))
+		shadowRoot.adoptedStyleSheets = [textFieldSheet]
+    shadowRoot.appendChild(template.cloneNode(true))
     const type = this.getAttribute('type')
     if (type === 'password')
       this.shadowRoot.getElementById("text-input").type = type
@@ -64,12 +95,25 @@ const listStatesEnum = {
 
 const listItemIndicator = "list-item-indicator"
 const listContainer = "list-container"
+
+const listContainerSheet = new CSSStyleSheet()
+listContainerSheet.replaceSync(`
+  :host(:state(empty)) {
+    display: none;
+  }
+  
+  :host(:state(not-empty)) {
+    display: block;
+  }
+`)
+
 class ListContainerElement extends HTMLElement {
   constructor() {
     super()
   	const template = document.getElementById(`${listContainer}-template`).content
 		const shadowRoot = this.attachShadow({ mode: "open" })
-		shadowRoot.appendChild(template.cloneNode(true))
+		shadowRoot.adoptedStyleSheets = [listContainerSheet]
+    shadowRoot.appendChild(template.cloneNode(true))
     this._internals = this.attachInternals()
 	  this._internals.states.add(listStatesEnum.EMPTY)
   }
@@ -101,7 +145,7 @@ customElements.define(listContainer, ListContainerElement)
 class ListItemIndicatorElement extends HTMLElement {
   constructor() {
     super()
-    c
+  	const template = document.getElementById(`${listItemIndicator}-template`).content
 		const shadowRoot = this.attachShadow({ mode: "open" })
 		shadowRoot.appendChild(template.cloneNode(true)) 
   }

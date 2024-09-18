@@ -40,9 +40,11 @@
       }
 
       const init = async () => {
-        const uiRes = await fetch('static/form.html')
+        const uiRes = await fetch("static/form.html")
         await parseHtmlFromRes(uiRes)
-        const pageRes = await fetch('static/login.html')
+        const componentsRes = await fetch("static/login-components.html")
+        await parseHtmlFromRes(componentsRes)
+        const pageRes = await fetch("static/login.html")
         await parseHtmlFromRes(pageRes)
 			
 				makeScriptElement('static/ws-stream.js')

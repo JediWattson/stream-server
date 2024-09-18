@@ -1,33 +1,6 @@
 <html>
   <head>
     <style>      
-      text-field:defined {
-        display: flex;
-        flex-direction: column;
-      }
-
-      status-indicator:defined {
-        border-radius: 5%;
-        padding: 10px;
-        text-align: center;
-        width: 130px;
-        color: white;
-      }
-    
-      status-indicator:state(disconnected) {
-        background: red;
-      }
-      
-      status-indicator:state(connected) {
-        background: green;
-      }
-
-
-      list-container:defined {
-        flex: 1;
-        padding: 0 32px;
-      }
-
       list-container:state(empty) {
         display: none;
       }
@@ -67,7 +40,6 @@
       <slot name="label"></slot>
       <div id="status"></div>
     </template>
-
     <script src="static/form.js"></script>
   </body>
 </html>

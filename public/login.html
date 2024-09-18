@@ -1,26 +1,32 @@
 <html>
-  <style>
-    .container {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-    }
+  <head>
+    <style>
+      .container {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+      }
 
-    .login-form-paper {
-      width: 420px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .login-form-fields {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+      .login-form-paper {
+        width: 420px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
 
-  </style>
+      .login-form-fields {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
 
+      .subscriptions-list {
+        flex: 1;
+        padding: 0 32px;
+      }
+    </style>
+  </head>
   <body>
     <div class="container">
       <div class="login-form-paper">
@@ -32,17 +38,8 @@
             <span slot="label">Connect</span>
           </submit-button>
         </div>
-        <div class="login-form-fields">
-          <text-field id="obs-url">
-            <span slot="label">Obs Url:</span>
-          </text-field>
-           <text-field id="obs-password" type="password">
-            <span slot="label">Password:</span>
-          </text-field>       
-          <submit-button id="obs-submit">
-            <span slot="label">connect</span>
-          </submit-button>
-        </div>
+        <obs-login class="login-form-fields">
+        </obs-login>
       </div>
     </div>
 
@@ -56,7 +53,7 @@
 	  </div>
 
     <div class="container">
-      <list-container id="subscriptions">
+      <list-container class="subscriptions-list" id="subscriptions">
         <span slot="title">Subscriptions</span>
       </list-container>
     </div>
