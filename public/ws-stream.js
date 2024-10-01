@@ -1,15 +1,14 @@
-const subscriptions = document.getElementById("subscriptions")
+const subscriptions = document.getElementById("subscriptions");
 const actionStreamStatus = document.getElementById("action-stream-status");
 
 const setDisconnected = () => {
-  actionStreamStatus.status = statusStatesEnum.DISCONNECTED
-  subscriptions.empty()
+  actionStreamStatus.status = statusStatesEnum.DISCONNECTED;
+  subscriptions.empty();
 };
 
 const setConnected = () => {
-  actionStreamStatus.status = statusStatesEnum.CONNECTED
+  actionStreamStatus.status = statusStatesEnum.CONNECTED;
 };
-
 
 let websocket;
 let connected;
@@ -17,24 +16,24 @@ let reconnectAttempts = 0;
 const maxReconnectAttempts = 10;
 
 async function connect() {
-  const token = document.getElementById("token").value
+  const token = document.getElementById("token").value;
   const headers = {
-	  Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
- 	}  
-	
-  //const res = await fetch("/subscription-list", { headers });
-	//const list = await res.json()
- 
-  const list = [{ type: "new-follower-event", label: "New Follower Event" }]
-  subscriptions.data = list
+  };
 
-	websocket = new WebSocket("/ws");	
+  //const res = await fetch("/subscription-list", { headers });
+  //const list = await res.json()
+
+  const list = [{ type: "new-follower-event", label: "New Follower Event" }];
+  subscriptions.data = list;
+
+  websocket = new WebSocket("/ws");
   websocket.onmessage = async function (event) {
     const data = JSON.parse(event?.data);
     if (data.type === "verify-with-id") {
       const res = await fetch("/verify", {
-        headers, 
+        headers,
         method: "POST",
         body: JSON.stringify({ userId: data.userId }),
       });
@@ -74,4 +73,3 @@ async function connect() {
 
 const button = document.getElementById("token-submit");
 button.addEventListener("click", () => !connected && connect());
-

@@ -5,19 +5,17 @@ const jwt = require("jsonwebtoken");
 const { v4: uuidV4 } = require("uuid");
 const { subList, token, getUserId } = require("./hooks");
 
-const isNotDevelop = process.env.NODE_ENV !== 'develop'
+const isNotDevelop = process.env.NODE_ENV !== "develop";
 const sockets = {};
 module.exports = ({ app, server, secret }) => {
   const wss = new WebSocket.Server({ server });
-  
+
   app.post("/verify", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1];
     const userId = req.body.userId;
 
     try {
-      if (isNotDevelop) 
-        jwt.verify(token, process.env.token_secret);
-  
+      if (isNotDevelop) jwt.verify(token, process.env.token_secret);
 
       sockets[userId].isAuth = true;
       res.sendStatus(200);
@@ -28,7 +26,7 @@ module.exports = ({ app, server, secret }) => {
   });
 
   wss.on("connection", async (ws, req) => {
-    let userId = "1"
+    let userId = "1";
     if (isNotDevelop) {
       const auth = await token({ secret });
       userId = await getUserId({ auth });
@@ -45,7 +43,7 @@ module.exports = ({ app, server, secret }) => {
     ws.on("close", () => {
       if (sockets[userId]) delete sockets[userId];
     });
-    
+
     const authTimeout = setTimeout(() => {
       if (sockets[userId].isAuth) return;
       ws.close();

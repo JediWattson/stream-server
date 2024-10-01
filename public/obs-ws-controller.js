@@ -31,12 +31,12 @@ const obsSocket = new OBSWebSocket();
 const connectButton = document.getElementById("obs-submit");
 const obsStatus = document.getElementById("obs-status");
 connectButton.addEventListener("click", async () => {
- 	const obsUrl = document.getElementById("obs-url").value;
-	const password = document.getElementById("obs-password").value;
-	await obsSocket.connect(obsUrl, password);
-  
-  obsStatus.status = statusStatesEnum.CONNECTED
+  const obsUrl = document.getElementById("obs-url").value;
+  const password = document.getElementById("obs-password").value;
+  await obsSocket.connect(obsUrl, password);
+
+  obsStatus.status = statusStatesEnum.CONNECTED;
   obsSocket.on("ConnectionClosed", () => {
-    obsStatus.status = statusStatesEnum.DISCONNECTED
+    obsStatus.status = statusStatesEnum.DISCONNECTED;
   });
 });
