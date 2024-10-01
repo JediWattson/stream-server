@@ -8,50 +8,32 @@
     <script src="static/widgets/submit-button.js"></script>
     <script src="static/widgets/list.js"></script>
     <script src="static/widgets/text-field.js"></script>
+    <script src="static/widgets/stream-login.js"></script>
+    <script src="static/widgets/obs-login.js"></script>
+    <script src="static/ws-stream.js" defer></script>
+    <script src="static/obs-ws-controller.js" defer></script>
   </head>
-
   <body>
-    <script>
-      const makeScriptElement = (src) => {
-        const script = document.createElement("script");
-        script.setAttribute("src", src);
-        document.body.append(script);
-      };
+    <div class="container">
+      <div class="login-form-paper">
+        <stream-login id="stream-login" class="login-form-fields"> </stream-login>
+        <obs-login id="obs-login" class="login-form-fields"> </obs-login>
+      </div>
+    </div>
 
-      const parser = new DOMParser();
+    <div class="container">
+      <status-indicator id="action-stream-status">
+        <span slot="title">Action Stream</span>
+      </status-indicator>
+      <status-indicator id="obs-status">
+        <span slot="title">Obs</span>
+      </status-indicator>
+    </div>
 
-      const parseHtmlFromRes = async (res) => {
-        const htmlText = await res.text();
-        const domModule = parser.parseFromString(htmlText, "text/html");
-        const headChildren = Array.from(domModule.head.children);
-        headChildren.forEach((child) => {
-          if (child.tagName !== "STYLE") return;
-
-          document.head.append(child);
-        });
-
-        const childArr = Array.from(domModule.body.children);
-        childArr.forEach((child) => {
-          if (child.tagName === "SCRIPT") {
-            makeScriptElement(child.src);
-            return;
-          }
-
-          document.body.append(child);
-        });
-      };
-
-      const init = async () => {
-        const componentsRes = await fetch("static/login-components.html");
-        await parseHtmlFromRes(componentsRes);
-        const pageRes = await fetch("static/login.html");
-        await parseHtmlFromRes(pageRes);
-
-        makeScriptElement("static/ws-stream.js");
-        makeScriptElement("static/obs-ws-controller.js");
-      };
-
-      init();
-    </script>
+    <div class="container">
+      <list-container class="subscriptions-list" id="subscriptions">
+        <span slot="title">Subscriptions</span>
+      </list-container>
+    </div>
   </body>
 </html>

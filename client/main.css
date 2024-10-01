@@ -65,3 +65,28 @@ button[type="submit"] {
   display: flex;
   flex-direction: column;
 }
+
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.login-form-paper {
+  width: 420px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.subscriptions-list {
+  flex: 1;
+  padding: 0 32px;
+}
