@@ -1,3 +1,4 @@
+const obsSocket = new OBSWebSocket();
 const handleMessage = async (payload) => {
   await obsSocket?.call("SetInputSettings", {
     inputName: "new follow",
@@ -27,16 +28,12 @@ const handleMessage = async (payload) => {
   }, 1000 * 7);
 };
 
-const obsSocket = new OBSWebSocket();
-const connectButton = document.getElementById("obs-submit");
-const obsStatus = document.getElementById("obs-status");
-connectButton.addEventListener("click", async () => {
-  const obsUrl = document.getElementById("obs-url").value;
-  const password = document.getElementById("obs-password").value;
+const obsForm = document.getElementById("obs-login");
+obsForm.onSubmit = async (obsUrl, password) => {
   await obsSocket.connect(obsUrl, password);
-
+  const obsStatus = document.getElementById("obs-status");
   obsStatus.status = statusStatesEnum.CONNECTED;
   obsSocket.on("ConnectionClosed", () => {
     obsStatus.status = statusStatesEnum.DISCONNECTED;
   });
-});
+};

@@ -15,7 +15,7 @@ module.exports = ({ app, server, secret }) => {
     const userId = req.body.userId;
 
     try {
-      if (isNotDevelop) jwt.verify(token, process.env.token_secret);
+      if (isNotDevelop) jwt.verify(token, process.env.TOKEN_SECRET);
 
       sockets[userId].isAuth = true;
       res.sendStatus(200);

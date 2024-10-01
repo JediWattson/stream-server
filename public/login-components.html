@@ -1,13 +1,21 @@
 <html>
   <body>
+    <template id="stream-login-template">
+      <text-field id="token">
+        <span slot="label">Token:</span>
+      </text-field>
+      <submit-button id="submit">
+        <span slot="label">connect</span>
+      </submit-button>
+    </template>
     <template id="obs-login-template">
-      <text-field id="obs-url">
+      <text-field id="url">
         <span slot="label">Obs Url:</span>
       </text-field>
-      <text-field id="obs-password" type="password">
+      <text-field id="password" type="password">
         <span slot="label">Password:</span>
       </text-field>
-      <submit-button id="obs-submit">
+      <submit-button id="submit">
         <span slot="label">connect</span>
       </submit-button>
     </template>

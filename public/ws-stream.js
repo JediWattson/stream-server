@@ -14,9 +14,7 @@ let websocket;
 let connected;
 let reconnectAttempts = 0;
 const maxReconnectAttempts = 10;
-
-async function connect() {
-  const token = document.getElementById("token").value;
+async function handleSubmit(token) {
   const headers = {
     Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
@@ -58,7 +56,7 @@ async function connect() {
     setDisconnected();
     if (reconnectAttempts <= maxReconnectAttempts) {
       const delay = Math.min(Math.pow(2, reconnectAttempts) * 1000, 30000);
-      setTimeout(() => !connected && connect(), delay);
+      setTimeout(() => !connected && handleSubmit(token), delay);
     }
   };
 
@@ -71,5 +69,8 @@ async function connect() {
   };
 }
 
-const button = document.getElementById("token-submit");
-button.addEventListener("click", () => !connected && connect());
+
+const streamForm = document.getElementById("stream-login")
+streamForm.onSubmit = handleSubmit
+
+

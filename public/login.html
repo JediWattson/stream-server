@@ -30,15 +30,8 @@
   <body>
     <div class="container">
       <div class="login-form-paper">
-        <div class="login-form-fields">
-          <text-field id="token">
-            <span slot="label">Token:</span>
-          </text-field>
-          <submit-button id="token-submit">
-            <span slot="label">Connect</span>
-          </submit-button>
-        </div>
-        <obs-login class="login-form-fields"> </obs-login>
+        <stream-login id="stream-login" class="login-form-fields"> </stream-login>
+        <obs-login id="obs-login" class="login-form-fields"> </obs-login>
       </div>
     </div>
 
