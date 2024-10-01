@@ -16,7 +16,9 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.raw({ type: "application/json" }));
-app.use("/static", express.static(path.join(__dirname, "/public")));
+
+app.use("/static", express.static(path.join(__dirname, "/client")));
+app.set('views', "./client/pages")
 app.set("view engine", "ejs");
 
 const sockets = wss({ server, app, secret });
