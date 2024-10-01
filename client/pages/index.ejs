@@ -4,6 +4,10 @@
     <title>Famtrees - Stream</title>
     <link rel="stylesheet" href="static/main.css" />
     <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js"></script>
+    <script src="static/widgets/status.js"></script>
+    <script src="static/widgets/submit-button.js"></script>
+    <script src="static/widgets/list.js"></script>
+    <script src="static/widgets/text-field.js"></script>
   </head>
 
   <body>
@@ -38,8 +42,6 @@
       };
 
       const init = async () => {
-        const uiRes = await fetch("static/form.html");
-        await parseHtmlFromRes(uiRes);
         const componentsRes = await fetch("static/login-components.html");
         await parseHtmlFromRes(componentsRes);
         const pageRes = await fetch("static/login.html");
