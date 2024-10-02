@@ -80,12 +80,6 @@ button[type="submit"] {
   gap: 16px;
 }
 
-.login-form-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
 .subscriptions-list {
   flex: 1;
   padding: 0 32px;
