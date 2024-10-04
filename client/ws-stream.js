@@ -14,7 +14,8 @@ let websocket;
 let connected;
 let reconnectAttempts = 0;
 const maxReconnectAttempts = 10;
-async function handleSubmit(token) {
+async function handleSubmit(payload) {
+	const token = payload.token
   const headers = {
     Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
@@ -43,20 +44,20 @@ async function handleSubmit(token) {
     handleMessage(data);
   };
 
-  websocket.onopen = function (event) {
+  websocket.onopen = function () {
     reconnectAttempts = 0;
     connected = true;
     setConnected();
   };
 
-  websocket.onclose = function (event) {
+  websocket.onclose = function () {
     websocket = null;
     reconnectAttempts++;
     connected = false;
     setDisconnected();
     if (reconnectAttempts <= maxReconnectAttempts) {
       const delay = Math.min(Math.pow(2, reconnectAttempts) * 1000, 30000);
-      setTimeout(() => !connected && handleSubmit(token), delay);
+      setTimeout(() => !connected && handleSubmit(payload), delay);
     }
   };
 

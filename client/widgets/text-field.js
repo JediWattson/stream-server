@@ -11,24 +11,31 @@ textFieldSheet.replaceSync(`
 class TextFieldElement extends HTMLElement {
   constructor() {
     super();
-    const template = document.createElement('template')
-    template.innerHTML = `
+ 	}
+
+	connectedCallback() {
+		this.attachShadow({ mode: "open" });
+		const id = this.getAttribute('id')
+		const template = document.createElement('template')
+  	template.innerHTML = `
       <label for="text-input">
         <slot name="label">label needed</slot>
       </label>
-      <input type="text" id="text-input" />
+      <input 
+				id="${id}-input"
+				${
+					this.hasAttribute("type") ?
+						`type=${this.getAttribute("type")}` : ""
+				}
+			/>
     `  
 
-    const shadowRoot = this.attachShadow({ mode: "open" });
-    shadowRoot.adoptedStyleSheets = [textFieldSheet];
-    shadowRoot.appendChild(template.content.cloneNode(true));
-    const type = this.getAttribute("type");
-    if (type === "password")
-      this.shadowRoot.getElementById("text-input").type = type;
-  }
+    this.shadowRoot.adoptedStyleSheets = [textFieldSheet];
+    this.shadowRoot.appendChild(template.content.cloneNode(true));
+	}
 
   get value() {
-    return this.shadowRoot.getElementById("text-input").value;
+    return this.shadowRoot.getElementById(`${this.getAttribute("id")}-input`).value;
   }
 }
 

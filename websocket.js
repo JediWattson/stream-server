@@ -28,7 +28,7 @@ module.exports = ({ app, server, secret }) => {
   wss.on("connection", async (ws, req) => {
     let userId = "1";
     if (isNotDevelop) {
-      const auth = await token({ secret });
+			const auth = await token({ secret });
       userId = await getUserId({ auth });
     }
 
