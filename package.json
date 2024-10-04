@@ -4,9 +4,9 @@
   "description": "a server that uses websockets and various technologies to implement streaming services",
   "main": "index.js",
   "scripts": {
-    "test": "npm run test",
-    "start": "nodemon",
-    "dev": "NODE_ENV=develop nodemon",
+    "start": "nodemon server",
+    "dev": "NODE_ENV=develop nodemon server",
+		"token": "node server/make-token",
     "pretty": "prettier  --plugin=prettier-plugin-ejs  --write ."
   },
   "repository": {
