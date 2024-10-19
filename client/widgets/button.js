@@ -13,7 +13,7 @@ buttonSheet.replaceSync(`
 
 `);
 
-class ButtonComponent extends HTMLElement {
+class Button extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -32,4 +32,4 @@ class ButtonComponent extends HTMLElement {
   }
 }
 
-customElements.define("button-component", ButtonComponent);
+customElements.define("button-component", Button);

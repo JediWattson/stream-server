@@ -8,12 +8,12 @@ composableFormStyleSheet.replaceSync(`
 `);
 
 const fieldTypes = {
-  button: "button-component",
+  button: "button",
   text: "text-field",
 };
 
 const composableForm = "composable-form";
-class ComposableFormElement extends HTMLElement {
+class Form extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -107,4 +107,4 @@ class ComposableFormElement extends HTMLElement {
   }
 }
 
-customElements.define(composableForm, ComposableFormElement);
+customElements.define(composableForm, Form);
