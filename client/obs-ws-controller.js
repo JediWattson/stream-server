@@ -29,8 +29,8 @@ const handleMessage = async (payload) => {
 };
 
 const obsForm = document.getElementById("obs-login");
-obsForm.onSubmit = async (obsUrl, password) => {
-  await obsSocket.connect(obsUrl, password);
+obsForm.onSubmit = async ({ url, password }) => {
+  await obsSocket.connect(url, password);
   const obsStatus = document.getElementById("obs-status");
   obsStatus.status = statusStatesEnum.CONNECTED;
   obsSocket.on("ConnectionClosed", () => {

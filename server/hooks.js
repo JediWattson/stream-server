@@ -1,9 +1,7 @@
-const crypto = require("crypto");
 const express = require("express");
 const { readAndParseStream } = require("./helpers");
-const secret = crypto.randomBytes(32).toString("hex");
 
-const token = async ({ secret }) => {
+const token = async () => {
   const data = new URLSearchParams({
     client_id: process.env.CLIENT_ID,
     client_secret: process.env.CLIENT_SECRET,
