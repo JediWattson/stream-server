@@ -3,7 +3,7 @@
   <head>
     <title>Famtrees - Stream</title>
     <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js"></script>
-    <script src="static/widgets/status.js"></script>
+    <script src="static/widgets/page.js"></script>
     <script src="static/widgets/list.js"></script>
     <script src="static/widgets/form.js"></script>
     <script src="static/ws-stream.js" defer></script>
@@ -41,19 +41,14 @@
       </div>
     </div>
 
-    <div class="container">
-      <status-indicator id="action-stream-status">
-        <span slot="title">Action Stream</span>
-      </status-indicator>
-      <status-indicator id="obs-status">
-        <span slot="title">Obs</span>
-      </status-indicator>
-    </div>
 
+    <div><page-controller/></div>
+    
     <div class="container">
       <list-container class="subscriptions-list" id="subscriptions">
         <span slot="title">Subscriptions</span>
       </list-container>
     </div>
+
   </body>
 </html>

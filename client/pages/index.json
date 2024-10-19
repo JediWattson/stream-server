@@ -1,0 +1,27 @@
+{
+  "tree": [
+    {
+      "container": [
+        "action-stream-status",
+        "obs-status"
+      ]
+    }
+  ],
+  "styles": ".container { display: flex; justify-content: center; gap: 8px; }",
+  "components": {
+    "action-stream-status": {
+      "name": "status-indicator",
+      "type": "status",
+      "slots": {
+        "title": "Action Stream"
+      }
+    },
+    "obs-status": {
+      "name": "status-indicator",
+      "type": "status",
+      "slots": {
+        "title": "Obs"
+      }
+    }
+  }
+}
