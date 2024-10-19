@@ -6,7 +6,7 @@ const statusStatesEnum = {
 const statusIndicatorSheet = new CSSStyleSheet();
 statusIndicatorSheet.replaceSync(`
   :host {
-    border-radius: 5%;
+    border-radius: 8px;
     padding: 10px;
     text-align: center;
     width: 130px;

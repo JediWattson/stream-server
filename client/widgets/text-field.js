@@ -4,7 +4,31 @@ textFieldSheet.replaceSync(`
   :host {
     display: flex;
     flex-direction: column;
+    gap: 4px;
+
   }
+
+  :host > label {
+    padding-left: 4px;
+  }
+
+  :host > input {
+    transition: 
+      padding 300ms,
+      box-shadow 300ms,
+      margin-top 300ms;
+    padding: 4px 8px;
+    border-radius: 8px;
+    box-shadow: 0 0 6px 2px #709ef1;
+  }
+
+  :host > input:focus {
+    margin-top: 2px;
+    outline: none;
+    padding: 6px 8px;
+    box-shadow: 0 0 6px 4px gold;
+  }
+
 `);
 
 class TextFieldElement extends HTMLElement {

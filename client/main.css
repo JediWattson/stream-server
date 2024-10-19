@@ -1,9 +1,3 @@
-body {
-  background: #082136;
-  color: #ababc5;
-  margin: 0;
-}
-
 #login-form {
   display: flex;
   flex-direction: column;
@@ -64,20 +58,6 @@ button[type="submit"] {
 .stack-vert {
   display: flex;
   flex-direction: column;
-}
-
-.container {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-}
-
-.login-form-paper {
-  width: 420px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
 }
 
 .subscriptions-list {

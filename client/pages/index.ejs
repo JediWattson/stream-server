@@ -2,7 +2,6 @@
 <html>
   <head>
     <title>Famtrees - Stream</title>
-    <link rel="stylesheet" href="static/main.css" />
     <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js"></script>
     <script src="static/widgets/status.js"></script>
     <script src="static/widgets/list.js"></script>
@@ -11,6 +10,29 @@
     <script src="static/obs-ws-controller.js" defer></script>
   </head>
   <body>
+    <style>
+      body {
+        font-family: sans-serif;
+        background: #082136;
+        color: #ababc5;
+        margin: 0;
+      }
+
+      .container {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .login-form-paper {
+        width: 420px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+    </style>
     <div class="container">
       <div class="login-form-paper">
         <composable-form id="stream-login" fields="<%= streamLoginFields  %>">
