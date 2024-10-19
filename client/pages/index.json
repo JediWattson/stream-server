@@ -1,10 +1,7 @@
 {
   "tree": [
     {
-      "container": [
-        "action-stream-status",
-        "obs-status"
-      ]
+      "container": ["action-stream-status", "obs-status"]
     }
   ],
   "styles": ".container { display: flex; justify-content: center; gap: 8px; }",

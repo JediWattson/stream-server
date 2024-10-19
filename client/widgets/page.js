@@ -11,19 +11,18 @@ class Page extends HTMLElement {
   }
 
   connectedCallback() {
-    this._componentsLoading = {}
+    this._componentsLoading = {};
     this.loadPage();
   }
 
   async loadPage() {
-    const res = await fetch('static/pages/index.json')
-    const data = await res.json()
-    pageSheet.insertRule(data.styles)
-    const componentTypes = new Set()
-    Object.values(data.components)
-      .forEach(c => componentTypes.add(c.type))
+    const res = await fetch("static/pages/index.json");
+    const data = await res.json();
+    pageSheet.insertRule(data.styles);
+    const componentTypes = new Set();
+    Object.values(data.components).forEach((c) => componentTypes.add(c.type));
 
-    componentTypes.forEach(type => {
+    componentTypes.forEach((type) => {
       this._componentsLoading[type] = true;
       const handleLoad = () => {
         this._componentsLoading[type] = false;
@@ -39,40 +38,44 @@ class Page extends HTMLElement {
       script.src = `static/widgets/${type}.js`;
       script.onload = handleLoad;
       document.head.append(script);
-    })
+    });
   }
 
   buildPage(data) {
     const template = document.createElement("template");
-    template.innerHTML = data.tree.map((section) => 
-      this.makeComponent(section, data.components)
-    ).join("")
+    template.innerHTML = data.tree
+      .map((section) => this.makeComponent(section, data.components))
+      .join("");
 
     this.shadowRoot.appendChild(template.content.cloneNode(true));
   }
 
-  makeComponent (el, components) {
+  makeComponent(el, components) {
     if (Array.isArray(el))
-      return el.map(innerEl => 
-        this.makeComponent(innerEl, components)
-      ).join("\n")
+      return el
+        .map((innerEl) => this.makeComponent(innerEl, components))
+        .join("\n");
     if (typeof el === "string") {
-      const component = components[el]
-      console.log(component)
+      const component = components[el];
+      console.log(component);
       return `
         <${component.name}>
-          ${Object.entries(component.slots).map(([type, value]) => 
-            `<span slot=${type}>${value}</span>`
-          ).join("\n")} 
+          ${Object.entries(component.slots)
+            .map(([type, value]) => `<span slot=${type}>${value}</span>`)
+            .join("\n")} 
         </${component.name}>
-      ` 
+      `;
     }
 
-    return Object.entries(el).map(([className, innerEl]) => `
+    return Object.entries(el)
+      .map(
+        ([className, innerEl]) => `
       <div class="${className}">
         ${this.makeComponent(innerEl, components)}
       </div>
-    `).join("\n")
+    `,
+      )
+      .join("\n");
   }
 }
 
