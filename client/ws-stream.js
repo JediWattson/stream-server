@@ -15,7 +15,7 @@ let connected;
 let reconnectAttempts = 0;
 const maxReconnectAttempts = 10;
 async function handleSubmit(payload) {
-	const token = payload.token
+  const token = payload.token;
   const headers = {
     Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
@@ -70,8 +70,5 @@ async function handleSubmit(payload) {
   };
 }
 
-
-const streamForm = document.getElementById("stream-login")
-streamForm.onSubmit = handleSubmit
-
-
+const streamForm = document.getElementById("stream-login");
+streamForm.onSubmit = handleSubmit;

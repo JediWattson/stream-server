@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon server",
     "dev": "NODE_ENV=develop nodemon server",
-		"token": "node server/make-token",
+    "token": "node server/make-token",
     "pretty": "prettier  --plugin=prettier-plugin-ejs  --write ."
   },
   "repository": {

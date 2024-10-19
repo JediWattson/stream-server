@@ -6,7 +6,7 @@ const express = require("express");
 const crypto = require("crypto");
 
 const wss = require("./websocket");
-const subscriptions = require("./subscriptions")
+const subscriptions = require("./subscriptions");
 const { webhook, delSub, subEvent, token, subList } = require("./hooks");
 
 const app = express();
@@ -18,38 +18,34 @@ app.use(express.json());
 app.use(express.raw({ type: "application/json" }));
 
 app.use("/static", express.static(path.join(__dirname, "..", "client")));
-app.set('views', "./client/pages")
+app.set("views", "./client/pages");
 app.set("view engine", "ejs");
 
 const sockets = wss({ server, app, secret });
 webhook({ sockets, app, secret });
-subscriptions({ app, secret })
+subscriptions({ app, secret });
 
 const obsLoginFields = [
-	{ 
-		type: 'text', 
-		id: 'url',
-		label: 'OBS Url'
-	}, { 
-		type: 'text', 
-		id: 'password',
-		label: 'Password',
-		options: { type: 'password' } 
-	}
-]
+  {
+    type: "text",
+    id: "url",
+    label: "OBS Url",
+  },
+  {
+    type: "text",
+    id: "password",
+    label: "Password",
+    options: { type: "password" },
+  },
+];
 
-const streamLoginFields = [
-	{ type: "text", id: "token", label: "Token" }
-]
+const streamLoginFields = [{ type: "text", id: "token", label: "Token" }];
 
 app.get("/", async (_, res) => {
-	res.render(
-		"index", 
-		{
-			streamLoginFields: JSON.stringify(streamLoginFields),
-			obsLoginFields: JSON.stringify(obsLoginFields) 
-		}
-	)
+  res.render("index", {
+    streamLoginFields: JSON.stringify(streamLoginFields),
+    obsLoginFields: JSON.stringify(obsLoginFields),
+  });
 });
 
 app.get("/browser-source", (req, res) => {

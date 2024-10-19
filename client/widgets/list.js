@@ -17,15 +17,14 @@ listContainerSheet.replaceSync(`
   }
 `);
 
-
 class ListContainerElement extends HTMLElement {
   constructor() {
     super();
-    const template = document.createElement('template')
+    const template = document.createElement("template");
     template.innerHTML = `
       <h2><slot name="title"></slot></h2>
       <div id="container"></div>
-    `
+    `;
     this.attachShadow({ mode: "open" });
     this.shadowRoot.adoptedStyleSheets = [listContainerSheet];
     this.shadowRoot.appendChild(template.content.cloneNode(true));
@@ -60,11 +59,11 @@ customElements.define(listContainer, ListContainerElement);
 class ListItemIndicatorElement extends HTMLElement {
   constructor() {
     super();
-    const template = document.createElement('template')
+    const template = document.createElement("template");
     template.innerHTML = `
       <slot name="label"></slot>
       <div id="status"></div>
-    `
+    `;
     this.attachShadow({ mode: "open" });
     this.shadowRoot.appendChild(template.content.cloneNode(true));
   }
