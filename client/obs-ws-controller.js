@@ -4,7 +4,7 @@ const handleMessage = async (payload) => {
     inputName: "new follow",
     overlay: true,
     inputSettings: {
-      url: `https://stream.famtrees.net/browser-source?sourcePath=sources/new-follower&username=${payload.data?.user_name}`,
+      url: `https://stream.famtrees.net/browser-source?sourcePath=new-follower&username=${payload.data?.user_name}`,
     },
   });
 
