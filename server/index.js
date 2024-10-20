@@ -25,27 +25,8 @@ const sockets = wss({ server, app, secret });
 webhook({ sockets, app, secret });
 subscriptions({ app, secret });
 
-const obsLoginFields = [
-  {
-    type: "text",
-    id: "url",
-    label: "OBS Url",
-  },
-  {
-    type: "text",
-    id: "password",
-    label: "Password",
-    options: { type: "password" },
-  },
-];
-
-const streamLoginFields = [{ type: "text", id: "token", label: "Token" }];
-
 app.get("/", async (_, res) => {
-  res.render("index", {
-    streamLoginFields: JSON.stringify(streamLoginFields),
-    obsLoginFields: JSON.stringify(obsLoginFields),
-  });
+  res.render("index");
 });
 
 app.get("/browser-source", (req, res) => {

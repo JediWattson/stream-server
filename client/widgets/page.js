@@ -1,7 +1,4 @@
 const pageSheet = new CSSStyleSheet();
-pageSheet.replaceSync(`
-  :host {}
-`);
 
 class Page extends HTMLElement {
   constructor() {
@@ -11,22 +8,35 @@ class Page extends HTMLElement {
   }
 
   connectedCallback() {
-    this._componentsLoading = {};
+    this.setGlobalStyles()
     this.loadPage();
+  }
+  
+  setGlobalStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+      body { 
+        font-family: sans-serif;
+        background: #082136;
+        color: #ababc5;
+        margin: 0;
+      }
+    `
+    document.head.appendChild(style); 
   }
 
   async loadPage() {
     const res = await fetch("static/pages/index.json");
     const data = await res.json();
-    pageSheet.insertRule(data.styles);
+    data.styles.forEach(rule => pageSheet.insertRule(rule))
     const componentTypes = new Set();
     Object.values(data.components).forEach((c) => componentTypes.add(c.type));
-
+    const componentsLoading = {};
     componentTypes.forEach((type) => {
-      this._componentsLoading[type] = true;
+      componentsLoading[type] = true;
       const handleLoad = () => {
-        this._componentsLoading[type] = false;
-        if (Object.values(this._componentsLoading).every((l) => !l))
+        componentsLoading[type] = false;
+        if (Object.values(componentsLoading).every((l) => !l))
           this.buildPage(data);
       };
 
@@ -48,34 +58,55 @@ class Page extends HTMLElement {
       .join("");
 
     this.shadowRoot.appendChild(template.content.cloneNode(true));
+    document.getPageElementById = (id) => this.shadowRoot.getElementById(id)
+    this.loadDeps(data)
   }
 
-  makeComponent(el, components) {
-    if (Array.isArray(el))
-      return el
-        .map((innerEl) => this.makeComponent(innerEl, components))
+  makeComponent(key, components) {
+    if (Array.isArray(key))
+      return key
+        .map((el) => this.makeComponent(el, components))
         .join("\n");
-    if (typeof el === "string") {
-      const component = components[el];
-      console.log(component);
+    if (typeof key === "string") {
+      const component = components[key];
+      const slots = component.slots 
+        ? Object.entries(component.slots)
+          .map(([type, value]) => `<span slot=${type}>${value}</span>`)
+          .join("\n")
+        : ""
+
+      const props = component.props 
+        ? Object.entries(component.props).reduce((acc, [key, val]) => {
+          const propStr = JSON.stringify(val).replace(/"/g, '&quot;')
+          acc.push(`${key}="${propStr}"`)
+          return acc
+        }, []).join(" ")
+        : ""
+
       return `
-        <${component.name}>
-          ${Object.entries(component.slots)
-            .map(([type, value]) => `<span slot=${type}>${value}</span>`)
-            .join("\n")} 
+        <${component.name} id="${key}" ${props}>
+          ${slots} 
         </${component.name}>
       `;
     }
 
-    return Object.entries(el)
+    return Object.entries(key)
       .map(
-        ([className, innerEl]) => `
+        ([className, el]) => `
       <div class="${className}">
-        ${this.makeComponent(innerEl, components)}
+        ${this.makeComponent(el, components)}
       </div>
     `,
       )
       .join("\n");
+  }
+
+  loadDeps(data) {
+    data.dependencies.forEach((dep) => {
+      const script = document.createElement("script");
+      script.src = `static/${dep}.js`;
+      document.head.append(script);
+    })
   }
 }
 

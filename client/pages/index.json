@@ -1,11 +1,48 @@
 {
   "tree": [
     {
+      "container": {
+        "login-form-paper": ["stream-login", "obs-login"]
+      }
+    },
+    {
       "container": ["action-stream-status", "obs-status"]
     }
   ],
-  "styles": ".container { display: flex; justify-content: center; gap: 8px; }",
-  "components": {
+ "components": {
+    "stream-login": {
+      "name": "composable-form",
+      "type": "form",
+      "props": {
+        "fields": [
+          { 
+            "type": "text", 
+            "id": "token", 
+            "label": "Token" 
+          }
+        ] 
+      }
+    },
+    "obs-login": {
+      "name": "composable-form",
+      "type": "form",
+      "props": {
+        "fields": [
+          {
+            "type": "text",
+            "id": "url",
+            "label": "OBS Url"
+          },
+          {
+            "type": "text",
+            "id": "password",
+            "label": "Password",
+            "options": { "type": "password" }
+          }
+        ] 
+      }
+    },
+
     "action-stream-status": {
       "name": "status-indicator",
       "type": "status",
@@ -20,5 +57,10 @@
         "title": "Obs"
       }
     }
-  }
+  },
+  "styles": [
+    ".container { display: flex; justify-content: center; gap: 8px; }",
+    ".login-form-paper { width: 420px; padding: 16px; display: flex; flex-direction: column; gap: 16px; }"
+  ],
+  "dependencies": ["obs-ws-controller", "ws-stream"]
 }

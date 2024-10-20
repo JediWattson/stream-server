@@ -28,10 +28,10 @@ const handleMessage = async (payload) => {
   }, 1000 * 7);
 };
 
-const obsForm = document.getElementById("obs-login");
+const obsForm = document.getPageElementById("obs-login");
 obsForm.onSubmit = async ({ url, password }) => {
   await obsSocket.connect(url, password);
-  const obsStatus = document.getElementById("obs-status");
+  const obsStatus = document.getPageElementById('obs-status');
   obsStatus.status = statusStatesEnum.CONNECTED;
   obsSocket.on("ConnectionClosed", () => {
     obsStatus.status = statusStatesEnum.DISCONNECTED;

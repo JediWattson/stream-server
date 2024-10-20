@@ -1,9 +1,6 @@
-const subscriptions = document.getElementById("subscriptions");
-const actionStreamStatus = document.getElementById("action-stream-status");
-
+const actionStreamStatus = document.getPageElementById("action-stream-status");
 const setDisconnected = () => {
   actionStreamStatus.status = statusStatesEnum.DISCONNECTED;
-  subscriptions.empty();
 };
 
 const setConnected = () => {
@@ -20,12 +17,6 @@ async function handleSubmit(payload) {
     Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
   };
-
-  //const res = await fetch("/subscription-list", { headers });
-  //const list = await res.json()
-
-  const list = [{ type: "new-follower-event", label: "New Follower Event" }];
-  subscriptions.data = list;
 
   websocket = new WebSocket("/ws");
   websocket.onmessage = async function (event) {
@@ -70,5 +61,5 @@ async function handleSubmit(payload) {
   };
 }
 
-const streamForm = document.getElementById("stream-login");
+const streamForm = document.getPageElementById("stream-login");
 streamForm.onSubmit = handleSubmit;
