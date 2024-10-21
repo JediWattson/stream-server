@@ -26,7 +26,8 @@ class Page extends HTMLElement {
   }
 
   async loadPage() {
-    const res = await fetch("static/pages/index.json");
+    const configName = window.location.pathname === "/" ? "/index" : window.location.pathname
+    const res = await fetch(`static/pages${configName}.json`);
     const data = await res.json();
     data.styles.forEach(rule => pageSheet.insertRule(rule))
     const componentTypes = new Set();
@@ -101,8 +102,8 @@ class Page extends HTMLElement {
       .join("\n");
   }
 
-  loadDeps(data) {
-    data.dependencies.forEach((dep) => {
+  loadDeps({ dependencies = [] }) {
+    dependencies.forEach((dep) => {
       const script = document.createElement("script");
       script.src = `static/${dep}.js`;
       document.head.append(script);

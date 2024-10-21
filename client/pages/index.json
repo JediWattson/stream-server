@@ -17,9 +17,17 @@
         "fields": [
           { 
             "type": "text", 
-            "id": "token", 
-            "label": "Token" 
+            "id": "username", 
+            "label": "User Name" 
+          },
+          {
+            "type": "text",
+            "id": "actions-password",
+            "name": "password",
+            "label": "Password",
+            "options": { "type": "password" }
           }
+
         ] 
       }
     },
@@ -33,9 +41,9 @@
             "id": "url",
             "label": "OBS Url"
           },
-          {
+         {
             "type": "text",
-            "id": "password",
+            "id": "obs-password",
             "label": "Password",
             "options": { "type": "password" }
           }

@@ -7,21 +7,17 @@ const { subList, token, getUserId } = require("./hooks");
 
 const isNotDevelop = process.env.NODE_ENV !== "develop";
 const sockets = {};
-module.exports = ({ app, server, secret }) => {
+module.exports = ({ app, verify, server, secret }) => {
   const wss = new WebSocket.Server({ server });
 
-  app.post("/verify", async (req, res) => {
-    const token = req.headers.authorization?.split(" ")[1];
-    const userId = req.body.userId;
-
+  app.post("/verify", verify, async (req, res) => {
     try {
-      if (isNotDevelop) jwt.verify(token, process.env.TOKEN_SECRET);
-
+     const userId = req.body.userId;
       sockets[userId].isAuth = true;
-      res.sendStatus(200);
+      res.sendStatus(204);
     } catch (err) {
       console.error(err);
-      res.sendStatus(401);
+      res.sendStatus(400);
     }
   });
 

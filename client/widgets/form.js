@@ -1,6 +1,7 @@
 const composableFormStyleSheet = new CSSStyleSheet();
 composableFormStyleSheet.replaceSync(`
 	:host form {
+    width: 420px;
 		display: flex;
 		flex-direction: column;
 		gap: 16px;
@@ -23,7 +24,7 @@ class Form extends HTMLElement {
   connectedCallback() {
     this._formLoaded = false;
     this._componentsLoading = {};
-    const fields = this.getFields();
+    const { fields } = this.getProps();
     fields.forEach((field) => this.loadField(field));
     this.loadField({ type: "button" });
   }
@@ -32,17 +33,12 @@ class Form extends HTMLElement {
     this._handleSubmit = cb;
   }
 
-  getFields() {
-    const fieldsStr = this.getAttribute("fields").trim();
-    return JSON.parse(fieldsStr);
-  }
-
   loadField({ type }) {
     this._componentsLoading[type] = true;
     const handleLoad = () => {
       this._componentsLoading[type] = false;
       if (Object.values(this._componentsLoading).every((l) => !l))
-        this.loadForm(this.getFields());
+        this.loadForm();
     };
 
     const otherScript = document.getElementById(type);
@@ -55,9 +51,10 @@ class Form extends HTMLElement {
     document.head.append(script);
   }
 
-  loadForm(fields) {
+  loadForm() {
     if (this._formLoaded) return;
 
+    const { fields, button } = this.getProps();
     this._formLoaded = true;
     const id = this.getAttribute("id");
     const template = document.createElement("template");
@@ -65,7 +62,7 @@ class Form extends HTMLElement {
 			<form id="${id}-form">
 				${fields.map(this.makeField).join("")}
 				<button-component id="${id}-submit" type="submit">
-					<span slot="label">connect</span>
+					<span slot="label">${button ? button.label : "connect"}</span>
 				</button-component>
     	</form>
 		`;
@@ -74,10 +71,10 @@ class Form extends HTMLElement {
     const form = this.shadowRoot.getElementById(`${id}-form`);
     form.onsubmit = () => {
       const values = {};
-      const fields = this.getFields();
+      const { fields } = this.getProps();
       for (const field of fields) {
         const fieldEl = this.shadowRoot.getElementById(field.id);
-        values[field.id] = fieldEl.value;
+        values[field.name || field.id] = fieldEl.value;
       }
       this._handleSubmit(values);
     };
@@ -105,6 +102,18 @@ class Form extends HTMLElement {
       </${fieldTypes[field.type]}>
     `;
   }
+
+  getProps() {
+    const fields = this.makeProp("fields") 
+    const button = this.makeProp("button");
+    return { fields, button } 
+  }
+    
+  makeProp(name) {
+    const prop = this.getAttribute(name);
+    return JSON.parse(prop);
+  }
+
 }
 
 customElements.define(composableForm, Form);

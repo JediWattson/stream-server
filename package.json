@@ -25,10 +25,15 @@
   },
   "homepage": "https://github.com/JediWattson/stream-server#readme",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.0",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.4",
     "uuid": "^10.0.0",
     "ws": "^8.18.0"
   },
