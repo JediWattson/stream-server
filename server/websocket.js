@@ -1,12 +1,8 @@
 const WebSocket = require("ws");
-const authenticationTimeout = 3000;
-const express = require("express");
-const jwt = require("jsonwebtoken");
-const { v4: uuidV4 } = require("uuid");
-const { subList, token, getUserId } = require("./hooks");
-
+const { token, getUserId } = require("./helpers");
 const isNotDevelop = process.env.NODE_ENV !== "develop";
 const sockets = {};
+
 module.exports = ({ app, verify, server, secret }) => {
   const wss = new WebSocket.Server({ server });
 
@@ -21,7 +17,7 @@ module.exports = ({ app, verify, server, secret }) => {
     }
   });
 
-  wss.on("connection", async (ws, req) => {
+  wss.on("connection", async (ws) => {
     let userId = "1";
     if (isNotDevelop) {
       const auth = await token({ secret });
@@ -37,7 +33,13 @@ module.exports = ({ app, verify, server, secret }) => {
     );
 
     ws.on("close", () => {
-      if (sockets[userId]) delete sockets[userId];
+      if (!sockets[userId]) return
+	
+			if (sockets[userId].isOnline) {
+				
+			}
+
+			delete sockets[userId];
     });
 
     const authTimeout = setTimeout(() => {

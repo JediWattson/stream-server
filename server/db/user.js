@@ -46,9 +46,15 @@ module.exports = (seq) => {
     try {
       const users = await User.findAll({ where: { username } })
       if (users.length === 0) return
-
+			
       const user = users[0].dataValues
-      await User.update({ lastLogin: seq.fn('NOW') }, { where: { id: user.id } })
+			const match = bcrypt.compare(password, user.passwordHash)
+			if (!match) return
+
+      await User.update(
+				{ lastLogin: seq.fn('NOW') }, 
+				{ where: { id: user.id } }
+			)
       return user
     } catch (err) {
       console.error(err)

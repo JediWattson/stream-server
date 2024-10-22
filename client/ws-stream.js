@@ -17,6 +17,8 @@ async function handleSubmit(payload) {
   const res = await fetch('/auth/login', { headers })
   if (res.status !== 204) return
 
+	await fetch('/subscriptions')
+
   websocket = new WebSocket("/ws");
   websocket.onmessage = async function (event) {
     const data = JSON.parse(event?.data);
@@ -27,7 +29,7 @@ async function handleSubmit(payload) {
         body: JSON.stringify({ userId: data.userId }),
       });
 
-      if (res.status !== 200) setDisconnected();
+      if (res.status !== 204) setDisconnected();
       return;
     }
 

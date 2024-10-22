@@ -40,14 +40,11 @@ const verify = (req, res, next) => {
     const user = decryptToken(encToken)
     if (user.expiresAt < Date.now()) return res.sendStatus(401)
     req.user = user
-
-    console.log("user:", user)
-  } catch (err) {
+		next()
+	} catch (err) {
     console.error(err)
     res.sendStatus(400)
   }
-
-  next()
 }
 
 module.exports = (opts) => {
@@ -69,8 +66,7 @@ module.exports = (opts) => {
     if (!noErrors) 
       return res.sendStatus(400) 
       
-    res.sendStatus(201)
-    
+    res.sendStatus(201) 
   })
 
   app.use('/auth', router)
