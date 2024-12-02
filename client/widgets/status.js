@@ -22,17 +22,19 @@ statusIndicatorSheet.replaceSync(`
   }
 `);
 
+const template = document.createElement("template");
+template.innerHTML = `<slot name="title"></slot>`;
+
 class StatusElement extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
-    const template = document.createElement("template");
-    template.innerHTML = `<slot name="title"></slot>`;
-
     const templateContent = template.content.cloneNode(true);
     this.shadowRoot.appendChild(templateContent);
     this.shadowRoot.adoptedStyleSheets = [statusIndicatorSheet];
+	}
 
+	connectedCallback() {
     this._internals = this.attachInternals();
     this._internals.states.add(statusStatesEnum.DISCONNECTED);
   }
