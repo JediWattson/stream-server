@@ -1,23 +1,32 @@
-const { spawn } = require('child_process')
+const { spawn } = require("child_process");
 
 const streamBackup = () => {
-	const ffmpeg = spawn('ffmpeg', [
-		'-i', 'stream_will_be_back.mp4',
-		'-c:v', 'libx264', 
-		'-preset', 'veryfast', 
-		'-b:v', '6000k', 
-		'-maxrate', '6000k', 
-		'-bufsize', '12000k',
-		'-c:a', 'aac', 
-		'-b:a', '128k', 
-		'-f', 'flv', 
-		`rtmp://live.twitch.tv/app/${process.env.TWITCH_STREAM_KEY}`
-	]);
+  const ffmpeg = spawn("ffmpeg", [
+    "-i",
+    "stream_will_be_back.mp4",
+    "-c:v",
+    "libx264",
+    "-preset",
+    "veryfast",
+    "-b:v",
+    "6000k",
+    "-maxrate",
+    "6000k",
+    "-bufsize",
+    "12000k",
+    "-c:a",
+    "aac",
+    "-b:a",
+    "128k",
+    "-f",
+    "flv",
+    `rtmp://live.twitch.tv/app/${process.env.TWITCH_STREAM_KEY}`,
+  ]);
 
-	ffmpeg.stderr.on('data', (data) => {
-		console.error(`stderr: ${data}`);
-	});
-}
+  ffmpeg.stderr.on("data", (data) => {
+    console.error(`stderr: ${data}`);
+  });
+};
 
 async function readAndParseStream(readableStream) {
   const reader = readableStream.getReader();
@@ -68,10 +77,8 @@ const getUserId = async ({ auth }) => {
 };
 
 module.exports = {
-	streamBackup,
+  streamBackup,
   readAndParseStream,
-	getUserId,
-	token
+  getUserId,
+  token,
 };
-
-

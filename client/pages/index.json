@@ -9,16 +9,16 @@
       "container": ["action-stream-status", "obs-status"]
     }
   ],
- "components": {
+  "components": {
     "stream-login": {
       "name": "composable-form",
       "type": "form",
       "props": {
         "fields": [
-          { 
-            "type": "text", 
-            "id": "username", 
-            "label": "User Name" 
+          {
+            "type": "text",
+            "id": "username",
+            "label": "User Name"
           },
           {
             "type": "text",
@@ -27,8 +27,7 @@
             "label": "Password",
             "options": { "type": "password" }
           }
-
-        ] 
+        ]
       }
     },
     "obs-login": {
@@ -41,13 +40,13 @@
             "id": "url",
             "label": "OBS Url"
           },
-         {
+          {
             "type": "text",
             "id": "obs-password",
             "label": "Password",
             "options": { "type": "password" }
           }
-        ] 
+        ]
       }
     },
 

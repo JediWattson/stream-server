@@ -104,16 +104,15 @@ class Form extends HTMLElement {
   }
 
   getProps() {
-    const fields = this.makeProp("fields") 
+    const fields = this.makeProp("fields");
     const button = this.makeProp("button");
-    return { fields, button } 
+    return { fields, button };
   }
-    
+
   makeProp(name) {
     const prop = this.getAttribute(name);
     return JSON.parse(prop);
   }
-
 }
 
 customElements.define(composableForm, Form);

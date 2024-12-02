@@ -5,31 +5,33 @@
       "name": "composable-form",
       "type": "form",
       "props": {
-        "button": { 
-          "label": "create user" 
+        "button": {
+          "label": "create user"
         },
         "fields": [
-          { 
-            "type": "text", 
-            "id": "userName", 
-            "label": "Username" 
+          {
+            "type": "text",
+            "id": "userName",
+            "label": "Username"
           },
-          { 
-            "type": "text", 
-            "id": "password1", 
+          {
+            "type": "text",
+            "id": "password1",
             "label": "Password",
             "options": { "type": "password" }
           },
-          { 
-            "type": "text", 
-            "id": "password2", 
-            "label": "Re-enter Password", 
+          {
+            "type": "text",
+            "id": "password2",
+            "label": "Re-enter Password",
             "options": { "type": "password" }
           }
-        ] 
+        ]
       }
     }
   },
-  "styles": [".container { margin-top: 32px; display: flex; justify-content: center; }"],
+  "styles": [
+    ".container { margin-top: 32px; display: flex; justify-content: center; }"
+  ],
   "dependencies": ["create-user"]
 }

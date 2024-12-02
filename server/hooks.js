@@ -24,7 +24,7 @@ const webhook = ({ app, secret, sockets }) => {
   app.post("/webhook", (req, res) => {
     const messageType = req.header("Twitch-Eventsub-Message-Type");
     const message = req.body;
-		if (messageType === "webhook_callback_verification")
+    if (messageType === "webhook_callback_verification")
       return res.status(200).send(message.challenge);
 
     if (messageType === "notification") {
@@ -45,4 +45,4 @@ const webhook = ({ app, secret, sockets }) => {
   });
 };
 
-module.exports = webhook
+module.exports = webhook;

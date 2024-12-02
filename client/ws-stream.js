@@ -12,12 +12,14 @@ let connected;
 let reconnectAttempts = 0;
 const maxReconnectAttempts = 10;
 async function handleSubmit(payload) {
-  const { username, password } = payload
-  const headers = { Authorization: `Bearer ${btoa(`${username}:${password}`)}` };
-  const res = await fetch('/auth/login', { headers })
-  if (res.status !== 204) return
+  const { username, password } = payload;
+  const headers = {
+    Authorization: `Bearer ${btoa(`${username}:${password}`)}`,
+  };
+  const res = await fetch("/auth/login", { headers });
+  if (res.status !== 204) return;
 
-	await fetch('/subscriptions')
+  await fetch("/subscriptions");
 
   websocket = new WebSocket("/ws");
   websocket.onmessage = async function (event) {
@@ -25,7 +27,7 @@ async function handleSubmit(payload) {
     if (data.type === "verify-with-id") {
       const res = await fetch("/verify", {
         method: "POST",
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: data.userId }),
       });
 

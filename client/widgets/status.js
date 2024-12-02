@@ -32,9 +32,9 @@ class StatusElement extends HTMLElement {
     const templateContent = template.content.cloneNode(true);
     this.shadowRoot.appendChild(templateContent);
     this.shadowRoot.adoptedStyleSheets = [statusIndicatorSheet];
-	}
+  }
 
-	connectedCallback() {
+  connectedCallback() {
     this._internals = this.attachInternals();
     this._internals.states.add(statusStatesEnum.DISCONNECTED);
   }

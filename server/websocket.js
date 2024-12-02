@@ -8,7 +8,7 @@ module.exports = ({ app, verify, server, secret }) => {
 
   app.post("/verify", verify, async (req, res) => {
     try {
-     const userId = req.body.userId;
+      const userId = req.body.userId;
       sockets[userId].isAuth = true;
       res.sendStatus(204);
     } catch (err) {
@@ -33,13 +33,12 @@ module.exports = ({ app, verify, server, secret }) => {
     );
 
     ws.on("close", () => {
-      if (!sockets[userId]) return
-	
-			if (sockets[userId].isOnline) {
-				
-			}
+      if (!sockets[userId]) return;
 
-			delete sockets[userId];
+      if (sockets[userId].isOnline) {
+      }
+
+      delete sockets[userId];
     });
 
     const authTimeout = setTimeout(() => {

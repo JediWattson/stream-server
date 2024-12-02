@@ -8,12 +8,12 @@ class Page extends HTMLElement {
   }
 
   connectedCallback() {
-    this.setGlobalStyles()
+    this.setGlobalStyles();
     this.loadPage();
   }
-  
+
   setGlobalStyles() {
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = `
       body { 
         font-family: sans-serif;
@@ -21,15 +21,16 @@ class Page extends HTMLElement {
         color: #ababc5;
         margin: 0;
       }
-    `
-    document.head.appendChild(style); 
+    `;
+    document.head.appendChild(style);
   }
 
   async loadPage() {
-    const configName = window.location.pathname === "/" ? "/index" : window.location.pathname
+    const configName =
+      window.location.pathname === "/" ? "/index" : window.location.pathname;
     const res = await fetch(`static/pages${configName}.json`);
     const data = await res.json();
-    data.styles.forEach(rule => pageSheet.insertRule(rule))
+    data.styles.forEach((rule) => pageSheet.insertRule(rule));
     const componentTypes = new Set();
     Object.values(data.components).forEach((c) => componentTypes.add(c.type));
     const componentsLoading = {};
@@ -59,30 +60,30 @@ class Page extends HTMLElement {
       .join("");
 
     this.shadowRoot.appendChild(template.content.cloneNode(true));
-    document.getPageElementById = (id) => this.shadowRoot.getElementById(id)
-    this.loadDeps(data)
+    document.getPageElementById = (id) => this.shadowRoot.getElementById(id);
+    this.loadDeps(data);
   }
 
   makeComponent(key, components) {
     if (Array.isArray(key))
-      return key
-        .map((el) => this.makeComponent(el, components))
-        .join("\n");
+      return key.map((el) => this.makeComponent(el, components)).join("\n");
     if (typeof key === "string") {
       const component = components[key];
-      const slots = component.slots 
+      const slots = component.slots
         ? Object.entries(component.slots)
-          .map(([type, value]) => `<span slot=${type}>${value}</span>`)
-          .join("\n")
-        : ""
+            .map(([type, value]) => `<span slot=${type}>${value}</span>`)
+            .join("\n")
+        : "";
 
-      const props = component.props 
-        ? Object.entries(component.props).reduce((acc, [key, val]) => {
-          const propStr = JSON.stringify(val).replace(/"/g, '&quot;')
-          acc.push(`${key}="${propStr}"`)
-          return acc
-        }, []).join(" ")
-        : ""
+      const props = component.props
+        ? Object.entries(component.props)
+            .reduce((acc, [key, val]) => {
+              const propStr = JSON.stringify(val).replace(/"/g, "&quot;");
+              acc.push(`${key}="${propStr}"`);
+              return acc;
+            }, [])
+            .join(" ")
+        : "";
 
       return `
         <${component.name} id="${key}" ${props}>
@@ -107,14 +108,13 @@ class Page extends HTMLElement {
       const script = document.createElement("script");
       script.src = `static/${dep}.js`;
       document.head.append(script);
-    })
+    });
   }
 }
 
-const componentName = "page-controller"
+const componentName = "page-controller";
 customElements.define(componentName, Page);
 window.onload = () => {
-	const pageController = document.createElement(componentName)
-	document.body.append(pageController)
-}
-
+  const pageController = document.createElement(componentName);
+  document.body.append(pageController);
+};
