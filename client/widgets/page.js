@@ -111,4 +111,10 @@ class Page extends HTMLElement {
   }
 }
 
-customElements.define("page-controller", Page);
+const componentName = "page-controller"
+customElements.define(componentName, Page);
+window.onload = () => {
+	const pageController = document.createElement(componentName)
+	document.body.append(pageController)
+}
+
