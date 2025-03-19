@@ -20,14 +20,29 @@ class Button extends HTMLElement {
     this.shadowRoot.adoptedStyleSheets = [buttonSheet];
   }
 
+  set onClick(cb) {
+    this._handleClick = cb
+  }
+
+  handleClick() {
+    if(!this._handleClick) return
+    
+    this._handleClick()
+  }
+
   connectedCallback() {
     const type = this.getAttribute("type");
     const template = document.createElement("template");
+
     template.innerHTML = `
-      <button ${type !== "" ? `type=${type}` : ""}>
+      <button 
+        onclick={this.handleClick}
+        ${type && type !== "" ? `type=${type}` : ""}
+      >
         <slot name="label"></slot>
       </button>
     `;
+    
     this.shadowRoot.appendChild(template.content.cloneNode(true));
   }
 }

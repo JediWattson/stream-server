@@ -27,9 +27,11 @@ class Page extends HTMLElement {
 
   async loadPage() {
     const configName = window.location.pathname === "/" ? "/index" : window.location.pathname
-    const res = await fetch(`static/pages${configName}.json`);
+    const res = await fetch(`static/pages/json/${configName}.json`);
     const data = await res.json();
+
     data.styles.forEach(rule => pageSheet.insertRule(rule))
+
     const componentTypes = new Set();
     Object.values(data.components).forEach((c) => componentTypes.add(c.type));
     const componentsLoading = {};
@@ -44,11 +46,11 @@ class Page extends HTMLElement {
       const otherScript = document.getElementById(type);
       if (otherScript) return handleLoad();
 
-      const script = document.createElement("script");
-      script.id = type;
-      script.src = `static/widgets/${type}.js`;
-      script.onload = handleLoad;
-      document.head.append(script);
+      makeScript({
+        id: type,
+        src: `static/widgets/${type}.js`,
+        onload: handleLoad
+      })
     });
   }
 
@@ -59,8 +61,10 @@ class Page extends HTMLElement {
       .join("");
 
     this.shadowRoot.appendChild(template.content.cloneNode(true));
+    
     document.getPageElementById = (id) => this.shadowRoot.getElementById(id)
     this.loadDeps(data)
+    pageBuilt()
   }
 
   makeComponent(key, components) {
@@ -68,7 +72,7 @@ class Page extends HTMLElement {
       return key
         .map((el) => this.makeComponent(el, components))
         .join("\n");
-    if (typeof key === "string") {
+    if (typeof key === "string") {      
       const component = components[key];
       const slots = component.slots 
         ? Object.entries(component.slots)
@@ -83,12 +87,12 @@ class Page extends HTMLElement {
           return acc
         }, []).join(" ")
         : ""
-
+      
       return `
         <${component.name} id="${key}" ${props}>
           ${slots} 
         </${component.name}>
-      `;
+      `
     }
 
     return Object.entries(key)
@@ -104,9 +108,7 @@ class Page extends HTMLElement {
 
   loadDeps({ dependencies = [] }) {
     dependencies.forEach((dep) => {
-      const script = document.createElement("script");
-      script.src = `static/${dep}.js`;
-      document.head.append(script);
+      makeScript({ src: `static/js/${dep}.js` })
     })
   }
 }

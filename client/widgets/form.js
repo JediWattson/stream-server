@@ -66,9 +66,8 @@ class Form extends HTMLElement {
 				</button-component>
     	</form>
 		`;
-    this.shadowRoot.appendChild(template.content.cloneNode(true));
+    const form = this.shadowRoot.appendChild(template.content.cloneNode(true));
 
-    const form = this.shadowRoot.getElementById(`${id}-form`);
     form.onsubmit = () => {
       const values = {};
       const { fields } = this.getProps();
@@ -113,7 +112,6 @@ class Form extends HTMLElement {
     const prop = this.getAttribute(name);
     return JSON.parse(prop);
   }
-
 }
 
 customElements.define(composableForm, Form);

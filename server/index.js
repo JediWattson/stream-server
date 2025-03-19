@@ -1,17 +1,17 @@
 require("dotenv").config();
 const PORT = process.env.PORT || 4000;
 
-const cookieParser = require('cookie-parser')
 const path = require("path");
-const http = require("http");
 const express = require("express");
+const http = require("http");
 const crypto = require("crypto");
+const cookieParser = require('cookie-parser')
 
 const authRoute = require('./routes/auth')
-const db = require("./db");
-const wss = require("./websocket");
 const subscriptions = require("./subscriptions");
+const wss = require("./websocket");
 const webhook = require("./hooks");
+const db = require("./db");
 
 
 const initServer = async () => {
@@ -23,7 +23,7 @@ const initServer = async () => {
   app.use(cookieParser())
   app.use(express.json());
   app.use("/static", express.static(path.join(__dirname, "..", "client")));
-  app.set("views", "./client/pages");
+  app.set("views", "./client/pages/ejs");
   app.set("view engine", "ejs");
 
   const { verify } = authRoute({ app, models })
@@ -36,7 +36,7 @@ const initServer = async () => {
   });
   
   app.get("/browser-source", (req, res) => {
-    res.render(`sources/${req.query.sourcePath}`);
+    res.render(`static/sources/${req.query.sourcePath}`);
   });
 
   server.listen(PORT, () => {

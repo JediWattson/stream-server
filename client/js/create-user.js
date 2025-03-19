@@ -7,4 +7,3 @@ newUserForm.onSubmit = async (data) => {
   const headers = { 'Authorization': `Bearer ${btoa(`${userName}:${password1}`)}` } 
   const res = await fetch('/auth/create', { headers })
 }
-

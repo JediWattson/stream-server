@@ -11,14 +11,7 @@ let websocket;
 let connected;
 let reconnectAttempts = 0;
 const maxReconnectAttempts = 10;
-async function handleSubmit(payload) {
-  const { username, password } = payload
-  const headers = { Authorization: `Bearer ${btoa(`${username}:${password}`)}` };
-  const res = await fetch('/auth/login', { headers })
-  if (res.status !== 204) return
-
-	await fetch('/subscriptions')
-
+async function initWebsockets() {
   websocket = new WebSocket("/ws");
   websocket.onmessage = async function (event) {
     const data = JSON.parse(event?.data);
@@ -61,6 +54,3 @@ async function handleSubmit(payload) {
     console.error("WebSocket error occurred:", event);
   };
 }
-
-const streamForm = document.getPageElementById("stream-login");
-streamForm.onSubmit = handleSubmit;
