@@ -19,23 +19,9 @@ class Page extends HTMLElement {
   getElementById = (id) => this.shadowRoot.getElementById(id)
 
   connectedCallback() {
-    this.setGlobalStyles()
     controller.connected()
   }
   
-  setGlobalStyles() {
-    const style = document.createElement('style');
-    style.textContent = `
-      body { 
-        font-family: sans-serif;
-        background: #082136;
-        color: #ababc5;
-        margin: 0;
-      }
-    `
-    document.head.appendChild(style); 
-  }
-
   async load(configName) {
     const res = await fetch(`static/pages/json/${configName}.json`);
     const data = await res.json();

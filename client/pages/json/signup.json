@@ -23,14 +23,14 @@
               "id": "actions-password1",
               "name": "password1",
               "label": "Password",
-              "options": { "type": "password1" }
+              "options": { "type": "password" }
             },
             {
               "type": "text",
               "id": "actions-password2",
               "name": "password2",
               "label": "Re-enter Password",
-              "options": { "type": "password2" }
+              "options": { "type": "password" }
             }  
           ] 
         }

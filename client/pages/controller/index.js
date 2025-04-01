@@ -44,7 +44,7 @@ const init = () => {
     const res = await handleLoginReq({ ...values, path: 'login' }) 
     if (res.status !== 204) return
 
-    window.history.pushState({}, '', '/dashboard')
+    window.location.href = '/dashboard'
   }
 
   const loadSignIn = () => {page.configName = ContainerTypes.SIGN_IN}

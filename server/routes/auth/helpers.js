@@ -1,6 +1,16 @@
 const crypto = require('crypto')
 const algo = 'aes-256-gcm'
-const key = crypto.randomBytes(32)
+const key = hexToBytes(
+  "7eaa901bbebc5ae90e8e8cd23974d9cf21d1a97cc65d0364a5748bc88fc8b474"
+)
+
+function hexToBytes(hexString) {
+  const bytes = [];
+  for (let i = 0; i < hexString.length; i += 2) {
+    bytes.push(parseInt(hexString.slice(i, i + 2), 16));
+  }
+  return new Uint8Array(bytes);
+}
 
 const middleware = (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1]
@@ -30,12 +40,20 @@ const decryptToken = (token) => {
   return JSON.parse(dec)
 }
 
+const checkToken = (encToken) => {
+    if (!encToken) return
+    
+    const user = decryptToken(encToken)
+    if (user.expiresAt < Date.now()) return
+
+    return user
+}
+
 const verify = (req, res, next) => {
   try {
-    const encToken = req.cookies.token;
-    if (!encToken) return res.sendStatus(401)
-    const user = decryptToken(encToken)
-    if (user.expiresAt < Date.now()) return res.sendStatus(401)
+    const user = checkToken(req.cookies.token)
+    if (!user) return res.sendStatus(401)
+    
     req.user = user
 		next()
 	} catch (err) {
@@ -45,5 +63,5 @@ const verify = (req, res, next) => {
 }
 
 module.exports = {
-    verify, encryptToken, middleware
+    verify, checkToken, encryptToken, middleware
 }

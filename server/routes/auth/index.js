@@ -1,11 +1,6 @@
+const { middleware, encryptToken, verify, checkToken } = require('./helpers')
 const express = require('express')
 const router = express.Router()
-
-const { 
-  middleware, 
-  encryptToken, 
-  verify 
-} = require('./helpers')
 
 module.exports = (opts) => {
   const { app, models } = opts
@@ -14,7 +9,7 @@ module.exports = (opts) => {
   router.get("/login", async (req, res) => {
     const [username, password] = req.auth
     const user = await models.User.login(username, password)
-    const token = encryptToken({ userId: user.id, expiresAt: Date.now() + 3600 })
+    const token = encryptToken({ userId: user.id, expiresAt: Date.now() + (1000 * 60 * 60 * 24 * 7) })
     res.cookie('token', token, { httpOnly: true, secure: true })
     res.sendStatus(204)
   })
@@ -29,5 +24,6 @@ module.exports = (opts) => {
   })
 
   app.use('/auth', router)
-  return { verify }
+
+  return { verify, checkToken }
 }

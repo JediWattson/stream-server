@@ -1,5 +1,4 @@
 require("dotenv").config();
-const PORT = process.env.PORT || 4000;
 
 const path = require("path");
 const express = require("express");
@@ -9,16 +8,17 @@ const cookieParser = require('cookie-parser')
 
 const authRoute = require('./routes/auth')
 const subscriptions = require("./subscriptions");
-const wss = require("./websocket");
-const webhook = require("./hooks");
 const db = require("./db");
+const webhook = require("./hooks");
+const wss = require("./websocket");
 
+const PORT = process.env.PORT || 4000;
+const secret = crypto.randomBytes(32).toString("hex");
 
 const initServer = async () => {
+  const app = express()
+  const server = http.createServer(app)
   const models = await db()
-  const app = express();
-  const server = http.createServer(app);
-  const secret = crypto.randomBytes(32).toString("hex");
 
   app.use(cookieParser())
   app.use(express.json());
@@ -26,15 +26,39 @@ const initServer = async () => {
   app.set("views", "./client/pages/ejs");
   app.set("view engine", "ejs");
 
-  const { verify } = authRoute({ app, models })
+  const { verify, checkToken } = authRoute({ app, models })
   const sockets = wss({ verify, server, app, secret });
   webhook({ sockets, app, secret });
   subscriptions({ verify, sockets, app, secret });
 
-  app.get(["/", "/new-user"], (_, res) => {
-    res.render("index");
+  app.get("/", (req, res) => {
+    const user = checkToken(req.cookies.token)
+    if (user) {
+      res.writeHead(302, { 'Location': '/dashboard' });
+      res.end()
+      return
+    }
+
+    res.render("index", {
+      title: "Sign In",
+      controller: "index"
+    });
   });
   
+  app.get("/dashboard", (req, res) => {
+    const user = checkToken(req.cookies.token)
+    if (!user) {
+      res.writeHead(302, { 'Location': '/' });
+      res.end()
+      return
+    }
+
+    res.render("index", {
+      title: "Home",
+      controller: "dashboard"
+    });
+  });
+
   app.get("/browser-source", (req, res) => {
     res.render(`static/sources/${req.query.sourcePath}`);
   });
