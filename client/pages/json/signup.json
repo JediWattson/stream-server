@@ -1,0 +1,46 @@
+{
+    "tree": [
+      {
+        "container": {                  
+          "signup-form-paper": "stream-signup"
+        }
+      }
+    ],
+    "components": {
+      "stream-signup": {
+        "name": "composable-form",
+        "type": "form",
+        "props": {
+          "button": { "label": "signup" },
+          "fields": [
+            { 
+              "type": "text", 
+              "id": "username", 
+              "label": "User Name" 
+            },
+            {
+              "type": "text",
+              "id": "actions-password1",
+              "name": "password1",
+              "label": "Password",
+              "options": { "type": "password1" }
+            },
+            {
+              "type": "text",
+              "id": "actions-password2",
+              "name": "password2",
+              "label": "Re-enter Password",
+              "options": { "type": "password2" }
+            }  
+          ] 
+        }
+      }
+    },
+    "styles": [
+      ".container { margin: 32px; display: flex; flex-direction: column; align-items: center; gap: 8px; }",
+      ".signup-form-paper { width: 420px; padding: 16px; display: flex; flex-direction: column; gap: 16px; }"
+    ],
+    "dependencies": ["router"]
+  }
+  
+  

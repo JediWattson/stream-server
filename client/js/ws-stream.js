@@ -1,10 +1,11 @@
-const actionStreamStatus = document.getPageElementById("action-stream-status");
+
+// const actionStreamStatus = document.getPageElementById("action-stream-status");
 const setDisconnected = () => {
-  actionStreamStatus.status = statusStatesEnum.DISCONNECTED;
+  // actionStreamStatus.status = statusStatesEnum.DISCONNECTED;
 };
 
 const setConnected = () => {
-  actionStreamStatus.status = statusStatesEnum.CONNECTED;
+  // actionStreamStatus.status = statusStatesEnum.CONNECTED;
 };
 
 let websocket;

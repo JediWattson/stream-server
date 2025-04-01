@@ -7,9 +7,20 @@ class Page extends HTMLElement {
     this.shadowRoot.adoptedStyleSheets = [pageSheet];
   }
 
+  get configName() {
+    return this._configName
+  }
+
+  set configName(configName) {
+    this._configName = configName
+    this.load(configName) 
+  }
+
+  getElementById = (id) => this.shadowRoot.getElementById(id)
+
   connectedCallback() {
     this.setGlobalStyles()
-    this.loadPage();
+    controller.connected()
   }
   
   setGlobalStyles() {
@@ -25,46 +36,52 @@ class Page extends HTMLElement {
     document.head.appendChild(style); 
   }
 
-  async loadPage() {
-    const configName = window.location.pathname === "/" ? "/index" : window.location.pathname
+  async load(configName) {
     const res = await fetch(`static/pages/json/${configName}.json`);
     const data = await res.json();
 
+    for(let i = 0; i < pageSheet.cssRules.length; i++) {
+      await pageSheet.replace(i)
+    }
     data.styles.forEach(rule => pageSheet.insertRule(rule))
 
     const componentTypes = new Set();
     Object.values(data.components).forEach((c) => componentTypes.add(c.type));
-    const componentsLoading = {};
-    componentTypes.forEach((type) => {
-      componentsLoading[type] = true;
-      const handleLoad = () => {
-        componentsLoading[type] = false;
-        if (Object.values(componentsLoading).every((l) => !l))
-          this.buildPage(data);
-      };
 
+    const componentsLoading = {};
+    const handleLoad = type => {
+      componentsLoading[type] = false;
+      if (Object.values(componentsLoading).every((l) => !l))
+        this.build(data);
+    };
+
+    componentTypes.forEach(type => {
       const otherScript = document.getElementById(type);
-      if (otherScript) return handleLoad();
+      if (otherScript) return handleLoad(type);
+
+      componentsLoading[type] = true;
 
       makeScript({
         id: type,
         src: `static/widgets/${type}.js`,
-        onload: handleLoad
+        onload: () => handleLoad(type)
       })
     });
   }
 
-  buildPage(data) {
+  build(data) {
     const template = document.createElement("template");
     template.innerHTML = data.tree
       .map((section) => this.makeComponent(section, data.components))
       .join("");
-
-    this.shadowRoot.appendChild(template.content.cloneNode(true));
+  
+    for (let child of this.shadowRoot.children) {
+      this.shadowRoot.removeChild(child)
+    }
     
-    document.getPageElementById = (id) => this.shadowRoot.getElementById(id)
+    this.shadowRoot.appendChild(template.content.cloneNode(true));
     this.loadDeps(data)
-    pageBuilt()
+    controller.built()
   }
 
   makeComponent(key, components) {

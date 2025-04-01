@@ -66,7 +66,8 @@ class Form extends HTMLElement {
 				</button-component>
     	</form>
 		`;
-    const form = this.shadowRoot.appendChild(template.content.cloneNode(true));
+    this.shadowRoot.appendChild(template.content.cloneNode(true));
+    const form = this.shadowRoot.children[0]
 
     form.onsubmit = () => {
       const values = {};

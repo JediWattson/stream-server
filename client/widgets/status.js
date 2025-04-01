@@ -37,6 +37,9 @@ class StatusElement extends HTMLElement {
     this._internals.states.add(statusStatesEnum.DISCONNECTED);
   }
 
+  /**
+   * @param {string} nextStatus
+   */
   set status(nextStatus) {
     this._internals.states.clear();
     this._internals.states.add(nextStatus);
