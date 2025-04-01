@@ -11,20 +11,11 @@ const makeScript = ({ src, id, onload }) => {
   return script
 }
 
-const handleSignUp = async ({ username, password1, password2 }) => {
-
-
-
-}
-
-const handleSignIn = async (payload) => {
-  const { username, password } = payload
-  const headers = { Authorization: `Bearer ${btoa(`${username}:${password}`)}` };
-  const res = await fetch('/auth/login', { headers })
-  if (res.status !== 204) return    
-
-  // await fetch('/subscriptions')    
-}
+const handleLoginReq = ({ username, password, path }) => fetch(`/auth/${path}`, {
+  headers: { 
+    Authorization: `Bearer ${btoa(`${username}:${password}`)}` 
+  }
+})
 
 const ContainerTypes = {
   SIGN_UP: 'signup',
@@ -33,6 +24,28 @@ const ContainerTypes = {
 
 const init = () => { 
   let page
+
+  const handleSignUp = async ({ values }) => {
+    const { username, password1, password2 } = values
+    if (password1 !== password2) return
+
+    const res = await handleLoginReq({ 
+      username,
+      password: password1,
+      path: 'create'
+    }) 
+
+    if (res.status !== 201) return
+
+    loadSignIn()
+  }
+
+  const handleSignIn = async ({ values }) => {
+    const res = await handleLoginReq({ ...values, path: 'login' }) 
+    if (res.status !== 204) return
+
+    window.history.pushState({}, '', '/dashboard')
+  }
 
   const loadSignIn = () => {page.configName = ContainerTypes.SIGN_IN}
   const loadSignUp = () => {page.configName = ContainerTypes.SIGN_UP}

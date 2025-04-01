@@ -74,9 +74,10 @@ class Form extends HTMLElement {
       const { fields } = this.getProps();
       for (const field of fields) {
         const fieldEl = this.shadowRoot.getElementById(field.id);
-        values[field.name || field.id] = fieldEl.value;
+        values[field.name || field.id] = fieldEl.value;    
       }
-      this._handleSubmit(values);
+  
+      this._handleSubmit({ values });
     };
 
     const submitButton = this.shadowRoot.getElementById(`${id}-submit`);
